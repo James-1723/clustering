@@ -1,0 +1,1410 @@
+2025-11-14 10:17:21 - ================================================================================
+📚 書籍處理完整流程系統
+================================================================================
+2025-11-14 10:17:21 - 開始時間: 2025-11-14 10:17:21
+2025-11-14 10:17:21 - Log 檔案: process_books_log_20251114_101721.txt
+2025-11-14 10:17:21 - 輸入檔案: input_data\7000.csv
+2025-11-14 10:17:21 - 最終輸出檔案: final_merged_output.csv
+2025-11-14 10:17:21 - DBSCAN 參數: eps=0.15, min_samples=2
+2025-11-14 10:17:21 - 
+📋 執行設定:
+2025-11-14 10:17:21 -   - 輸入檔案: input_data\7000.csv
+2025-11-14 10:17:21 -   - DBSCAN 參數: eps=0.15, min_samples=2
+2025-11-14 10:17:21 -   - BERT 相似度閾值: 0.99
+2025-11-14 10:17:21 -   - 最終輸出: final_merged_output.csv
+2025-11-14 10:17:21 -   - Log 檔案: process_books_log_20251114_101721.txt
+2025-11-14 10:17:21 - 
+================================================================================
+2025-11-14 10:17:21 - 📊 第一階段：Embedding 分群
+2025-11-14 10:17:21 - ================================================================================
+2025-11-14 10:17:21 - 
+📂 讀取資料: input_data\7000.csv
+2025-11-14 10:17:21 - ✅ 讀取完成！總共 184 筆資料
+2025-11-14 10:17:21 - 讀取檔案: input_data\7000.csv, 筆數: 184
+2025-11-14 10:17:21 - 
+🧹 清理標題...
+2025-11-14 10:17:21 - ✅ 標題清理完成
+2025-11-14 10:17:21 - 
+🔄 開始計算 embeddings...
+2025-11-14 10:17:21 - 總共需要處理 184 筆資料
+2025-11-14 10:17:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:23 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:23 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:24 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:24 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:24 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:25 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:25 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:29 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:29 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:31 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:31 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:38 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:38 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:38 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:43 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:43 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:45 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:45 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:49 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:49 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:50 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:50 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:50 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:57 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:57 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:57 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:17:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:09 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:09 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:21 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:21 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 10:18:22 - 
+✅ Embedding 生成完成！
+2025-11-14 10:18:22 -   - 成功: 184 筆
+2025-11-14 10:18:22 -   - 失敗: 0 筆
+2025-11-14 10:18:22 - Embedding 統計: 成功 184 筆, 失敗 0 筆
+2025-11-14 10:18:23 - 💾 已儲存包含 embeddings 的資料至: data_with_embeddings.csv
+2025-11-14 10:18:23 - 
+📊 準備分群資料...
+2025-11-14 10:18:23 -   - 有效資料: 184 筆
+2025-11-14 10:18:23 -   - Embedding 矩陣形狀: (184, 1536)
+2025-11-14 10:18:23 - 
+🎯 執行 DBSCAN 分群...
+2025-11-14 10:18:23 -   - eps (鄰域半徑): 0.15
+2025-11-14 10:18:23 -   - min_samples (最小樣本數): 2
+2025-11-14 10:18:23 -   - 使用 cosine 距離
+2025-11-14 10:18:23 - DBSCAN 參數: eps=0.15, min_samples=2, metric=cosine
+2025-11-14 10:18:23 -   ✅ DBSCAN 分群完成
+2025-11-14 10:18:23 - 
+✅ 分群完成！
+2025-11-14 10:18:23 -   - 識別出的群數: 48
+2025-11-14 10:18:23 -   - 噪音點: 49 筆
+2025-11-14 10:18:23 - 分群結果: 48 個群, 49 個噪音點
+2025-11-14 10:18:23 - 
+📊 各群的資料筆數：
+2025-11-14 10:18:23 -   群 0:    16 筆 (  8.7%)
+2025-11-14 10:18:23 -   群 1:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 2:     4 筆 (  2.2%)
+2025-11-14 10:18:23 -   群 3:     3 筆 (  1.6%)
+2025-11-14 10:18:23 -   群 4:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 5:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 6:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 7:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 8:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 9:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 10:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 11:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 12:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 13:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 14:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 15:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 16:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 17:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 18:     8 筆 (  4.3%)
+2025-11-14 10:18:23 -   群 19:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 20:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 21:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 22:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 23:    12 筆 (  6.5%)
+2025-11-14 10:18:23 -   群 24:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 25:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 26:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 27:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 28:     4 筆 (  2.2%)
+2025-11-14 10:18:23 -   群 29:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 30:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 31:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 32:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 33:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 34:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 35:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 36:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 37:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 38:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 39:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 40:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 41:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 42:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 43:     6 筆 (  3.3%)
+2025-11-14 10:18:23 -   群 44:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 45:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 46:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   群 47:     2 筆 (  1.1%)
+2025-11-14 10:18:23 -   噪音:    49 筆 ( 26.6%)
+2025-11-14 10:18:23 - 
+💾 開始拆分並儲存 CSV 檔案...
+2025-11-14 10:18:23 -   - 輸出資料夾: clustered_data
+2025-11-14 10:18:23 -   ✅ 噪音點: 49 筆 → clustered_data\cluster_noise.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_noise.csv, 筆數: 49
+2025-11-14 10:18:23 -   ✅ 群 0: 16 筆 → clustered_data\cluster_0.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_0.csv, 筆數: 16
+2025-11-14 10:18:23 -   ✅ 群 1: 2 筆 → clustered_data\cluster_1.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_1.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 2: 4 筆 → clustered_data\cluster_2.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_2.csv, 筆數: 4
+2025-11-14 10:18:23 -   ✅ 群 3: 3 筆 → clustered_data\cluster_3.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_3.csv, 筆數: 3
+2025-11-14 10:18:23 -   ✅ 群 4: 2 筆 → clustered_data\cluster_4.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_4.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 5: 2 筆 → clustered_data\cluster_5.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_5.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 6: 2 筆 → clustered_data\cluster_6.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_6.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 7: 2 筆 → clustered_data\cluster_7.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_7.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 8: 2 筆 → clustered_data\cluster_8.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_8.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 9: 2 筆 → clustered_data\cluster_9.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_9.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 10: 2 筆 → clustered_data\cluster_10.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_10.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 11: 2 筆 → clustered_data\cluster_11.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_11.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 12: 2 筆 → clustered_data\cluster_12.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_12.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 13: 2 筆 → clustered_data\cluster_13.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_13.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 14: 2 筆 → clustered_data\cluster_14.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_14.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 15: 2 筆 → clustered_data\cluster_15.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_15.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 16: 2 筆 → clustered_data\cluster_16.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_16.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 17: 2 筆 → clustered_data\cluster_17.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_17.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 18: 8 筆 → clustered_data\cluster_18.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_18.csv, 筆數: 8
+2025-11-14 10:18:23 -   ✅ 群 19: 2 筆 → clustered_data\cluster_19.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_19.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 20: 2 筆 → clustered_data\cluster_20.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_20.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 21: 2 筆 → clustered_data\cluster_21.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_21.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 22: 2 筆 → clustered_data\cluster_22.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_22.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 23: 12 筆 → clustered_data\cluster_23.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_23.csv, 筆數: 12
+2025-11-14 10:18:23 -   ✅ 群 24: 2 筆 → clustered_data\cluster_24.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_24.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 25: 2 筆 → clustered_data\cluster_25.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_25.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 26: 2 筆 → clustered_data\cluster_26.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_26.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 27: 2 筆 → clustered_data\cluster_27.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_27.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 28: 4 筆 → clustered_data\cluster_28.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_28.csv, 筆數: 4
+2025-11-14 10:18:23 -   ✅ 群 29: 2 筆 → clustered_data\cluster_29.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_29.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 30: 2 筆 → clustered_data\cluster_30.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_30.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 31: 2 筆 → clustered_data\cluster_31.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_31.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 32: 2 筆 → clustered_data\cluster_32.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_32.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 33: 2 筆 → clustered_data\cluster_33.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_33.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 34: 2 筆 → clustered_data\cluster_34.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_34.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 35: 2 筆 → clustered_data\cluster_35.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_35.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 36: 2 筆 → clustered_data\cluster_36.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_36.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 37: 2 筆 → clustered_data\cluster_37.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_37.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 38: 2 筆 → clustered_data\cluster_38.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_38.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 39: 2 筆 → clustered_data\cluster_39.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_39.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 40: 2 筆 → clustered_data\cluster_40.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_40.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 41: 2 筆 → clustered_data\cluster_41.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_41.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 42: 2 筆 → clustered_data\cluster_42.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_42.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 43: 6 筆 → clustered_data\cluster_43.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_43.csv, 筆數: 6
+2025-11-14 10:18:23 -   ✅ 群 44: 2 筆 → clustered_data\cluster_44.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_44.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 45: 2 筆 → clustered_data\cluster_45.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_45.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 46: 2 筆 → clustered_data\cluster_46.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_46.csv, 筆數: 2
+2025-11-14 10:18:23 -   ✅ 群 47: 2 筆 → clustered_data\cluster_47.csv
+2025-11-14 10:18:23 - 儲存分群檔案: clustered_data\cluster_47.csv, 筆數: 2
+2025-11-14 10:18:23 - 
+  📊 完整資料（含分群標籤）: clustered_data\full_data_with_clusters.csv
+2025-11-14 10:18:23 - 
+✅ 第一階段完成！分群檔案已儲存。
+2025-11-14 10:18:23 - 
+📊 第一階段統計:
+2025-11-14 10:18:23 -   - 總資料筆數: 184
+2025-11-14 10:18:23 -   - 有效資料筆數: 184
+2025-11-14 10:18:23 -   - 識別出的群數: 48
+2025-11-14 10:18:23 -   - 噪音點: 49
+2025-11-14 10:18:23 -   - 生成檔案數: 49
+2025-11-14 10:18:23 - 
+================================================================================
+2025-11-14 10:18:23 - 🤖 第二階段：BERT 去重合併
+2025-11-14 10:18:23 - ================================================================================
+2025-11-14 10:18:23 - 
+載入 BERT 模型: paraphrase-multilingual-MiniLM-L12-v2
+2025-11-14 10:18:23 - Use pytorch device_name: cpu
+2025-11-14 10:18:23 - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2025-11-14 10:18:26 - ✅ BERT 模型載入完成
+2025-11-14 10:18:26 - 相似度閾值: 0.99
+2025-11-14 10:18:26 - 
+找到 49 個分群檔案:
+2025-11-14 10:18:26 -   - cluster_0.csv
+2025-11-14 10:18:26 -   - cluster_1.csv
+2025-11-14 10:18:26 -   - cluster_10.csv
+2025-11-14 10:18:26 -   - cluster_11.csv
+2025-11-14 10:18:26 -   - cluster_12.csv
+2025-11-14 10:18:26 -   - cluster_13.csv
+2025-11-14 10:18:26 -   - cluster_14.csv
+2025-11-14 10:18:26 -   - cluster_15.csv
+2025-11-14 10:18:26 -   - cluster_16.csv
+2025-11-14 10:18:26 -   - cluster_17.csv
+2025-11-14 10:18:26 -   - cluster_18.csv
+2025-11-14 10:18:26 -   - cluster_19.csv
+2025-11-14 10:18:26 -   - cluster_2.csv
+2025-11-14 10:18:26 -   - cluster_20.csv
+2025-11-14 10:18:26 -   - cluster_21.csv
+2025-11-14 10:18:26 -   - cluster_22.csv
+2025-11-14 10:18:26 -   - cluster_23.csv
+2025-11-14 10:18:26 -   - cluster_24.csv
+2025-11-14 10:18:26 -   - cluster_25.csv
+2025-11-14 10:18:26 -   - cluster_26.csv
+2025-11-14 10:18:26 -   - cluster_27.csv
+2025-11-14 10:18:26 -   - cluster_28.csv
+2025-11-14 10:18:26 -   - cluster_29.csv
+2025-11-14 10:18:26 -   - cluster_3.csv
+2025-11-14 10:18:26 -   - cluster_30.csv
+2025-11-14 10:18:26 -   - cluster_31.csv
+2025-11-14 10:18:26 -   - cluster_32.csv
+2025-11-14 10:18:26 -   - cluster_33.csv
+2025-11-14 10:18:26 -   - cluster_34.csv
+2025-11-14 10:18:26 -   - cluster_35.csv
+2025-11-14 10:18:26 -   - cluster_36.csv
+2025-11-14 10:18:26 -   - cluster_37.csv
+2025-11-14 10:18:26 -   - cluster_38.csv
+2025-11-14 10:18:26 -   - cluster_39.csv
+2025-11-14 10:18:26 -   - cluster_4.csv
+2025-11-14 10:18:26 -   - cluster_40.csv
+2025-11-14 10:18:26 -   - cluster_41.csv
+2025-11-14 10:18:26 -   - cluster_42.csv
+2025-11-14 10:18:26 -   - cluster_43.csv
+2025-11-14 10:18:26 -   - cluster_44.csv
+2025-11-14 10:18:26 -   - cluster_45.csv
+2025-11-14 10:18:26 -   - cluster_46.csv
+2025-11-14 10:18:26 -   - cluster_47.csv
+2025-11-14 10:18:26 -   - cluster_5.csv
+2025-11-14 10:18:26 -   - cluster_6.csv
+2025-11-14 10:18:26 -   - cluster_7.csv
+2025-11-14 10:18:26 -   - cluster_8.csv
+2025-11-14 10:18:26 -   - cluster_9.csv
+2025-11-14 10:18:26 -   - cluster_noise.csv
+2025-11-14 10:18:26 - 
+📂 處理檔案: cluster_0.csv
+2025-11-14 10:18:26 - 開始處理: clustered_data\cluster_0.csv
+2025-11-14 10:18:26 -   - 讀取 16 筆資料
+2025-11-14 10:18:26 -   - 開始兩兩比較...
+2025-11-14 10:18:26 - BERT 比較: '熟女記47...' vs '熟女記47限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:26 -     ✅ 找到相同書籍:
+2025-11-14 10:18:26 -        [0] 熟女記47
+2025-11-14 10:18:26 -        [8] 熟女記47限
+2025-11-14 10:18:26 - BERT 比較: '熟女記48...' vs '熟女記48限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:26 -     ✅ 找到相同書籍:
+2025-11-14 10:18:26 -        [1] 熟女記48
+2025-11-14 10:18:26 -        [9] 熟女記48限
+2025-11-14 10:18:27 - BERT 比較: '熟女記49...' vs '熟女記49限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:27 -     ✅ 找到相同書籍:
+2025-11-14 10:18:27 -        [2] 熟女記49
+2025-11-14 10:18:27 -        [10] 熟女記49限
+2025-11-14 10:18:27 - BERT 比較: '熟女記50...' vs '熟女記50限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:27 -     ✅ 找到相同書籍:
+2025-11-14 10:18:27 -        [3] 熟女記50
+2025-11-14 10:18:27 -        [11] 熟女記50限
+2025-11-14 10:18:27 - BERT 比較: '熟女記51...' vs '熟女記51限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:27 -     ✅ 找到相同書籍:
+2025-11-14 10:18:27 -        [4] 熟女記51
+2025-11-14 10:18:27 -        [12] 熟女記51限
+2025-11-14 10:18:27 - BERT 比較: '熟女記52...' vs '熟女記52限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:27 -     ✅ 找到相同書籍:
+2025-11-14 10:18:27 -        [5] 熟女記52
+2025-11-14 10:18:27 -        [13] 熟女記52限
+2025-11-14 10:18:28 -   - 完成 120 次比較
+2025-11-14 10:18:28 -   - 識別出 10 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(47)
+2025-11-14 10:18:28 -        - 熟女記47(限)
+2025-11-14 10:18:28 - 合併 #1: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20328 / E253-12550, Title: 熟女記(47)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12559, Title: 熟女記47(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20328 / E253-12550 / E253-12559
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263397842.0 / （空白）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(48)
+2025-11-14 10:18:28 -        - 熟女記48(限)
+2025-11-14 10:18:28 - 合併 #2: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20326 / E253-12551, Title: 熟女記(48)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12560, Title: 熟女記48(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20326 / E253-12551 / E253-12560
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263397859.0 / （空白）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(49)
+2025-11-14 10:18:28 -        - 熟女記49(限)
+2025-11-14 10:18:28 - 合併 #3: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20325 / E253-12552, Title: 熟女記(49)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12561, Title: 熟女記49(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20325 / E253-12552 / E253-12561
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263397989.0 / （空白）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(50)
+2025-11-14 10:18:28 -        - 熟女記50(限)
+2025-11-14 10:18:28 - 合併 #4: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20323 / E253-12553, Title: 熟女記(50)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12562, Title: 熟女記50(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20323 / E253-12553 / E253-12562
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263397996.0 / （空白）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(51)
+2025-11-14 10:18:28 -        - 熟女記51(限)
+2025-11-14 10:18:28 - 合併 #5: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20166 / E253-12555, Title: 熟女記(51)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12563, Title: 熟女記51(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20166 / E253-12555 / E253-12563
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263398023.0 / （空白）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 熟女記(52)
+2025-11-14 10:18:28 -        - 熟女記52(限)
+2025-11-14 10:18:28 - 合併 #6: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-20165 / E253-12556, Title: 熟女記(52)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-12564, Title: 熟女記52(限)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-20165 / E253-12556 / E253-12564
+2025-11-14 10:18:28 -   合併後 ISBN: 9786263398030.0 / （空白）
+2025-11-14 10:18:28 -   ✅ 處理完成: 16 筆 → 10 筆
+2025-11-14 10:18:28 -   📊 其中 6 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_0.csv 處理結果: 16 筆 → 10 筆, 多書組: 6
+2025-11-14 10:18:28 -   💾 已寫入 10 筆資料到 final_merged_output.csv (新建檔案)
+2025-11-14 10:18:28 - 已寫入 10 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_1.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_1.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '緣同學的反差感太犯規了第5話...' vs '緣同學的反差感太犯規了第5話...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 緣同學的反差感太犯規了第5話
+2025-11-14 10:18:28 -        [1] 緣同學的反差感太犯規了第5話
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 緣同學的反差感太犯規了(第5話)
+2025-11-14 10:18:28 -        - 緣同學的反差感太犯規了(第5話)
+2025-11-14 10:18:28 - 合併 #7: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-06240, Title: 緣同學的反差感太犯規了(第5話)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-06241, Title: 緣同學的反差感太犯規了(第5話)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-06240 / E253-06241
+2025-11-14 10:18:28 -   合併後 ISBN: 6710560820005
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:28 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_1.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:28 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_10.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_10.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:28 - cluster_10.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:28 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_11.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_11.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:28 - cluster_11.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:28 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_12.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_12.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:28 - cluster_12.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:28 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_13.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_13.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '聲音美國獨立出版獎最受喜愛傑出作品認知學習x想像創意繪本...' vs '聲音美國獨立出版獎最受喜愛傑出作品認知學習X想像創意繪本電子書...' → 相似度: 0.9947 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 聲音美國獨立出版獎最受喜愛傑出作品認知學習x想像創意繪本
+2025-11-14 10:18:28 -        [1] 聲音美國獨立出版獎最受喜愛傑出作品認知學習X想像創意繪本電子書
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 聲音【美國獨立出版獎最受喜愛傑出作品：認知學習X想像創意繪本】
+2025-11-14 10:18:28 -        - 聲音【美國獨立出版獎最受喜愛傑出作品：認知學習X想像創意繪本】(電子書)
+2025-11-14 10:18:28 - 合併 #8: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-06607 / E253-06606, Title: 聲音【美國獨立出版獎最受喜愛傑出作品：認知學習X想像創意繪本】
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-06608, Title: 聲音【美國獨立出版獎最受喜愛傑出作品：認知學習X想像創意繪本】(電子書)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-06607 / E253-06606 / E253-06608
+2025-11-14 10:18:28 -   合併後 ISBN: 9786267672426.0 / （空白）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:28 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_13.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:28 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_14.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_14.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '雖說是惡役千金但攻略對象看起來也太異常COMIC2...' vs '雖說是惡役千金但攻略對象看起來也太異常COMIC2...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 雖說是惡役千金但攻略對象看起來也太異常COMIC2
+2025-11-14 10:18:28 -        [1] 雖說是惡役千金但攻略對象看起來也太異常COMIC2
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 雖說是惡役千金，但攻略對象看起來也太異常＠COMIC(2)
+2025-11-14 10:18:28 -        - 雖說是惡役千金，但攻略對象看起來也太異常@COMIC(2)
+2025-11-14 10:18:28 - 合併 #9: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-12770 / E253-12769, Title: 雖說是惡役千金，但攻略對象看起來也太異常＠COMIC(2)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-20279, Title: 雖說是惡役千金，但攻略對象看起來也太異常@COMIC(2)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-12770 / E253-12769 / E253-20279
+2025-11-14 10:18:28 -   合併後 ISBN: 9786264303460 / 9786264301886 / 9786264301886
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:28 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_14.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:28 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_15.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_15.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '點句成金電子書...' vs '點句成金電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 點句成金電子書
+2025-11-14 10:18:28 -        [1] 點句成金電子書
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 點句成金(電子書)
+2025-11-14 10:18:28 -        - 點句成金(電子書)
+2025-11-14 10:18:28 - 合併 #10: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-06646 / E253-06645, Title: 點句成金(電子書)
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-06647, Title: 點句成金(電子書)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-06646 / E253-06645 / E253-06647
+2025-11-14 10:18:28 -   合併後 ISBN: （空白）/ 8969000033064 / 9787516842867
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:28 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_15.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:28 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_16.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_16.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:28 - cluster_16.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:28 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_17.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_17.csv
+2025-11-14 10:18:28 -   - 讀取 2 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗...' vs '翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗
+2025-11-14 10:18:28 -        [1] 翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗電子書
+2025-11-14 10:18:28 -   - 完成 1 次比較
+2025-11-14 10:18:28 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:28 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:28 -        - 翻轉人生的關鍵時刻：讓平凡變不凡，打造永生難忘的巔峰體驗
+2025-11-14 10:18:28 -        - 翻轉人生的關鍵時刻：讓平凡變不凡，打造永生難忘的巔峰體驗(電子書)
+2025-11-14 10:18:28 - 合併 #11: 2 本書
+2025-11-14 10:18:28 -   [0] TAICCA_ID: E253-06675 / E253-06674, Title: 翻轉人生的關鍵時刻：讓平凡變不凡，打造永生難忘的巔峰體驗
+2025-11-14 10:18:28 -   [1] TAICCA_ID: E253-06676, Title: 翻轉人生的關鍵時刻：讓平凡變不凡，打造永生難忘的巔峰體驗(電子書)
+2025-11-14 10:18:28 -   合併後 TAICCA_ID: E253-06675 / E253-06674 / E253-06676
+2025-11-14 10:18:28 -   合併後 ISBN: 9786264196260.0 / （空白）
+2025-11-14 10:18:28 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:28 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:28 - cluster_17.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:28 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:28 - 
+📂 處理檔案: cluster_18.csv
+2025-11-14 10:18:28 - 開始處理: clustered_data\cluster_18.csv
+2025-11-14 10:18:28 -   - 讀取 8 筆資料
+2025-11-14 10:18:28 -   - 開始兩兩比較...
+2025-11-14 10:18:28 - BERT 比較: '贅婿的榮耀38...' vs '贅婿的榮耀38限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [0] 贅婿的榮耀38
+2025-11-14 10:18:28 -        [4] 贅婿的榮耀38限
+2025-11-14 10:18:28 - BERT 比較: '贅婿的榮耀39...' vs '贅婿的榮耀39限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [1] 贅婿的榮耀39
+2025-11-14 10:18:28 -        [5] 贅婿的榮耀39限
+2025-11-14 10:18:28 - BERT 比較: '贅婿的榮耀40...' vs '贅婿的榮耀40限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [2] 贅婿的榮耀40
+2025-11-14 10:18:28 -        [6] 贅婿的榮耀40限
+2025-11-14 10:18:28 - BERT 比較: '贅婿的榮耀41...' vs '贅婿的榮耀41限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:28 -     ✅ 找到相同書籍:
+2025-11-14 10:18:28 -        [3] 贅婿的榮耀41
+2025-11-14 10:18:28 -        [7] 贅婿的榮耀41限
+2025-11-14 10:18:29 -   - 完成 28 次比較
+2025-11-14 10:18:29 -   - 識別出 4 個獨立書籍（組）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 贅婿的榮耀(38)
+2025-11-14 10:18:29 -        - 贅婿的榮耀38(限)
+2025-11-14 10:18:29 - 合併 #12: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-20388 / E253-12797, Title: 贅婿的榮耀(38)
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-12792, Title: 贅婿的榮耀38(限)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-20388 / E253-12797 / E253-12792
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263397774.0 / （空白）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 贅婿的榮耀(39)
+2025-11-14 10:18:29 -        - 贅婿的榮耀39(限)
+2025-11-14 10:18:29 - 合併 #13: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-20390 / E253-12798, Title: 贅婿的榮耀(39)
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-12793, Title: 贅婿的榮耀39(限)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-20390 / E253-12798 / E253-12793
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263397781.0 / （空白）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 贅婿的榮耀(40)
+2025-11-14 10:18:29 -        - 贅婿的榮耀40(限)
+2025-11-14 10:18:29 - 合併 #14: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-20232 / E253-12799, Title: 贅婿的榮耀(40)
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-12795, Title: 贅婿的榮耀40(限)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-20232 / E253-12799 / E253-12795
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263398047.0 / （空白）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 贅婿的榮耀(41)
+2025-11-14 10:18:29 -        - 贅婿的榮耀41(限)
+2025-11-14 10:18:29 - 合併 #15: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-20234 / E253-12800, Title: 贅婿的榮耀(41)
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-12796, Title: 贅婿的榮耀41(限)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-20234 / E253-12800 / E253-12796
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263398054.0 / （空白）
+2025-11-14 10:18:29 -   ✅ 處理完成: 8 筆 → 4 筆
+2025-11-14 10:18:29 -   📊 其中 4 組包含多本重複書籍
+2025-11-14 10:18:29 - cluster_18.csv 處理結果: 8 筆 → 4 筆, 多書組: 4
+2025-11-14 10:18:29 -   💾 已追加 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_19.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_19.csv
+2025-11-14 10:18:29 -   - 讀取 2 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 - BERT 比較: '藝術的祕密名作中隱藏的訊息意義與象徵符號...' vs '藝術的祕密名作中隱藏的訊息意義與象徵符號電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:29 -     ✅ 找到相同書籍:
+2025-11-14 10:18:29 -        [0] 藝術的祕密名作中隱藏的訊息意義與象徵符號
+2025-11-14 10:18:29 -        [1] 藝術的祕密名作中隱藏的訊息意義與象徵符號電子書
+2025-11-14 10:18:29 -   - 完成 1 次比較
+2025-11-14 10:18:29 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 藝術的祕密：名作中隱藏的訊息、意義與象徵符號
+2025-11-14 10:18:29 -        - 藝術的祕密：名作中隱藏的訊息、意義與象徵符號(電子書)
+2025-11-14 10:18:29 - 合併 #16: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-06779 / E253-06778, Title: 藝術的祕密：名作中隱藏的訊息、意義與象徵符號
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-06780, Title: 藝術的祕密：名作中隱藏的訊息、意義與象徵符號(電子書)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-06779 / E253-06778 / E253-06780
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263906044.0 / （空白）
+2025-11-14 10:18:29 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:29 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:29 - cluster_19.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:29 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_2.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_2.csv
+2025-11-14 10:18:29 -   - 讀取 4 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 -   - 完成 6 次比較
+2025-11-14 10:18:29 -   - 識別出 4 個獨立書籍（組）
+2025-11-14 10:18:29 -   ✅ 處理完成: 4 筆 → 4 筆
+2025-11-14 10:18:29 - cluster_2.csv 處理結果: 4 筆 → 4 筆, 多書組: 0
+2025-11-14 10:18:29 -   💾 已追加 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_20.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_20.csv
+2025-11-14 10:18:29 -   - 讀取 2 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 -   - 完成 1 次比較
+2025-11-14 10:18:29 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:29 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:29 - cluster_20.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:29 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_21.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_21.csv
+2025-11-14 10:18:29 -   - 讀取 2 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 - BERT 比較: '覺醒之道寫給現代人的漸悟指南...' vs '覺醒之道寫給現代人的漸悟指南電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:29 -     ✅ 找到相同書籍:
+2025-11-14 10:18:29 -        [0] 覺醒之道寫給現代人的漸悟指南
+2025-11-14 10:18:29 -        [1] 覺醒之道寫給現代人的漸悟指南電子書
+2025-11-14 10:18:29 -   - 完成 1 次比較
+2025-11-14 10:18:29 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 覺醒之道：寫給現代人的漸悟指南
+2025-11-14 10:18:29 -        - 覺醒之道：寫給現代人的漸悟指南(電子書)
+2025-11-14 10:18:29 - 合併 #17: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-06847 / E253-06846, Title: 覺醒之道：寫給現代人的漸悟指南
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-06848, Title: 覺醒之道：寫給現代人的漸悟指南(電子書)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-06847 / E253-06846 / E253-06848
+2025-11-14 10:18:29 -   合併後 ISBN: 9789861758572 / 9789861758589
+2025-11-14 10:18:29 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:29 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:29 - cluster_21.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:29 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_22.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_22.csv
+2025-11-14 10:18:29 -   - 讀取 2 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 - BERT 比較: '覺醒心藥...' vs '覺醒心藥電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:29 -     ✅ 找到相同書籍:
+2025-11-14 10:18:29 -        [0] 覺醒心藥
+2025-11-14 10:18:29 -        [1] 覺醒心藥電子書
+2025-11-14 10:18:29 -   - 完成 1 次比較
+2025-11-14 10:18:29 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:29 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:29 -        - 覺醒心藥
+2025-11-14 10:18:29 -        - 覺醒心藥(電子書)
+2025-11-14 10:18:29 - 合併 #18: 2 本書
+2025-11-14 10:18:29 -   [0] TAICCA_ID: E253-06850 / E253-06849, Title: 覺醒心藥
+2025-11-14 10:18:29 -   [1] TAICCA_ID: E253-06851, Title: 覺醒心藥(電子書)
+2025-11-14 10:18:29 -   合併後 TAICCA_ID: E253-06850 / E253-06849 / E253-06851
+2025-11-14 10:18:29 -   合併後 ISBN: 9786263645868 / 9786263645899
+2025-11-14 10:18:29 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:29 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:29 - cluster_22.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:29 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:29 - 
+📂 處理檔案: cluster_23.csv
+2025-11-14 10:18:29 - 開始處理: clustered_data\cluster_23.csv
+2025-11-14 10:18:29 -   - 讀取 12 筆資料
+2025-11-14 10:18:29 -   - 開始兩兩比較...
+2025-11-14 10:18:29 - BERT 比較: '警門贅婿1...' vs '警門贅婿1限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:29 -     ✅ 找到相同書籍:
+2025-11-14 10:18:29 -        [0] 警門贅婿1
+2025-11-14 10:18:29 -        [6] 警門贅婿1限
+2025-11-14 10:18:29 - BERT 比較: '警門贅婿2...' vs '警門贅婿2限...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:29 -     ✅ 找到相同書籍:
+2025-11-14 10:18:29 -        [1] 警門贅婿2
+2025-11-14 10:18:29 -        [7] 警門贅婿2限
+2025-11-14 10:18:30 -   - 完成 66 次比較
+2025-11-14 10:18:30 -   - 識別出 10 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 警門贅婿(1)
+2025-11-14 10:18:30 -        - 警門贅婿1(限)
+2025-11-14 10:18:30 - 合併 #19: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-20229 / E253-12886, Title: 警門贅婿(1)
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-12884, Title: 警門贅婿1(限)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-20229 / E253-12886 / E253-12884
+2025-11-14 10:18:30 -   合併後 ISBN: 9786263397965.0 / （空白）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 警門贅婿(2)
+2025-11-14 10:18:30 -        - 警門贅婿2(限)
+2025-11-14 10:18:30 - 合併 #20: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-20233 / E253-12887, Title: 警門贅婿(2)
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-12885, Title: 警門贅婿2(限)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-20233 / E253-12887 / E253-12885
+2025-11-14 10:18:30 -   合併後 ISBN: 9786263397972.0 / （空白）
+2025-11-14 10:18:30 -   ✅ 處理完成: 12 筆 → 10 筆
+2025-11-14 10:18:30 -   📊 其中 2 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_23.csv 處理結果: 12 筆 → 10 筆, 多書組: 2
+2025-11-14 10:18:30 -   💾 已追加 10 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 10 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_24.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_24.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 - BERT 比較: '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:30 -   標準化後: '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器3版...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器3版...'
+2025-11-14 10:18:30 -     ✅ 找到相同書籍:
+2025-11-14 10:18:30 -        [0] 蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版
+2025-11-14 10:18:30 -        [1] 蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版電子書
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 蘭徹斯特策略：小克大、弱勝強，打敗大你10倍對手的終極武器(三版)
+2025-11-14 10:18:30 -        - 蘭徹斯特策略：小克大、弱勝強，打敗大你10倍對手的終極武器(三版)(電子書)
+2025-11-14 10:18:30 - 合併 #21: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-06866 / E253-06865, Title: 蘭徹斯特策略：小克大、弱勝強，打敗大你10倍對手的終極武器(三版)
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-06867, Title: 蘭徹斯特策略：小克大、弱勝強，打敗大你10倍對手的終極武器(三版)(電子書)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-06866 / E253-06865 / E253-06867
+2025-11-14 10:18:30 -   合併後 ISBN: 9786267600962 / 9786267600986
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:30 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_24.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:30 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_25.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_25.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 - BERT 比較: '魔女犬碰碰1命中注定的搭檔...' vs '魔女犬碰碰1命中注定的搭檔電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:30 -     ✅ 找到相同書籍:
+2025-11-14 10:18:30 -        [0] 魔女犬碰碰1命中注定的搭檔
+2025-11-14 10:18:30 -        [1] 魔女犬碰碰1命中注定的搭檔電子書
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 魔女犬碰碰1：命中注定的搭檔
+2025-11-14 10:18:30 -        - 魔女犬碰碰1：命中注定的搭檔(電子書)
+2025-11-14 10:18:30 - 合併 #22: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-06887 / E253-06886, Title: 魔女犬碰碰1：命中注定的搭檔
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-06888, Title: 魔女犬碰碰1：命中注定的搭檔(電子書)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-06887 / E253-06886 / E253-06888
+2025-11-14 10:18:30 -   合併後 ISBN: 9786267504802 / 9786267504598 / 9786267504598
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:30 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_25.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:30 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_26.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_26.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 - BERT 比較: '魔女犬碰碰2驚喜橡實的魔法祕密...' vs '魔女犬碰碰2驚喜橡實的魔法祕密電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:30 -     ✅ 找到相同書籍:
+2025-11-14 10:18:30 -        [0] 魔女犬碰碰2驚喜橡實的魔法祕密
+2025-11-14 10:18:30 -        [1] 魔女犬碰碰2驚喜橡實的魔法祕密電子書
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 魔女犬碰碰2：驚喜橡實的魔法祕密
+2025-11-14 10:18:30 -        - 魔女犬碰碰2：驚喜橡實的魔法祕密(電子書)
+2025-11-14 10:18:30 - 合併 #23: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-06890 / E253-06889, Title: 魔女犬碰碰2：驚喜橡實的魔法祕密
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-06891, Title: 魔女犬碰碰2：驚喜橡實的魔法祕密(電子書)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-06890 / E253-06889 / E253-06891
+2025-11-14 10:18:30 -   合併後 ISBN: 9786267504758 / 9786267504666 / 9786267504666
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:30 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_26.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:30 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_27.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_27.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:30 - cluster_27.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_28.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_28.csv
+2025-11-14 10:18:30 -   - 讀取 4 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 6 次比較
+2025-11-14 10:18:30 -   - 識別出 4 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 4 筆 → 4 筆
+2025-11-14 10:18:30 - cluster_28.csv 處理結果: 4 筆 → 4 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 4 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_29.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_29.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:30 - cluster_29.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_3.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_3.csv
+2025-11-14 10:18:30 -   - 讀取 3 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 3 次比較
+2025-11-14 10:18:30 -   - 識別出 3 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 3 筆 → 3 筆
+2025-11-14 10:18:30 - cluster_3.csv 處理結果: 3 筆 → 3 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 3 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 3 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_30.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_30.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:30 - cluster_30.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_31.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_31.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:30 - cluster_31.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:30 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_32.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_32.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 - BERT 比較: '權力天平電子書...' vs '權力天平電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:30 -     ✅ 找到相同書籍:
+2025-11-14 10:18:30 -        [0] 權力天平電子書
+2025-11-14 10:18:30 -        [1] 權力天平電子書
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 權力天平(電子書)
+2025-11-14 10:18:30 -        - 權力天平(電子書)
+2025-11-14 10:18:30 - 合併 #24: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-06929 / E253-06928, Title: 權力天平(電子書)
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-06930, Title: 權力天平(電子書)
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-06929 / E253-06928 / E253-06930
+2025-11-14 10:18:30 -   合併後 ISBN: （空白）/ 8969000032568 / 9787229023461
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:30 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_32.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:30 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_33.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_33.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:30 - BERT 比較: '權力的血脈全三冊撼動全球走向的家族一部交織萬年文明的新世界史...' vs '權力的血脈全三冊撼動全球走向的家族一部交織萬年文明的新世界史...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:30 -   標準化後: '權力的血脈全3冊撼動全球走向的家族1部交織萬年文明的新世界史...' vs '權力的血脈全3冊撼動全球走向的家族1部交織萬年文明的新世界史...'
+2025-11-14 10:18:30 -     ✅ 找到相同書籍:
+2025-11-14 10:18:30 -        [0] 權力的血脈全三冊撼動全球走向的家族一部交織萬年文明的新世界史
+2025-11-14 10:18:30 -        [1] 權力的血脈全三冊撼動全球走向的家族一部交織萬年文明的新世界史
+2025-11-14 10:18:30 -   - 完成 1 次比較
+2025-11-14 10:18:30 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:30 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:30 -        - 權力的血脈（全三冊）：撼動全球走向的「家族」，一部交織萬年文明的新世界史
+2025-11-14 10:18:30 -        - 權力的血脈(全三冊)：撼動全球走向的「家族」，一部交織萬年文明的新世界史
+2025-11-14 10:18:30 - 合併 #25: 2 本書
+2025-11-14 10:18:30 -   [0] TAICCA_ID: E253-12969 / E253-12967, Title: 權力的血脈（全三冊）：撼動全球走向的「家族」，一部交織萬年文明的新世界史
+2025-11-14 10:18:30 -   [1] TAICCA_ID: E253-20361, Title: 權力的血脈(全三冊)：撼動全球走向的「家族」，一部交織萬年文明的新世界史
+2025-11-14 10:18:30 -   合併後 TAICCA_ID: E253-12969 / E253-12967 / E253-20361
+2025-11-14 10:18:30 -   合併後 ISBN: 9786263109384 / 9786263109230 / 9786263109230
+2025-11-14 10:18:30 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:30 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:30 - cluster_33.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:30 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:30 - 
+📂 處理檔案: cluster_34.csv
+2025-11-14 10:18:30 - 開始處理: clustered_data\cluster_34.csv
+2025-11-14 10:18:30 -   - 讀取 2 筆資料
+2025-11-14 10:18:30 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_34.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_35.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_35.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '體面不失分寸的溝通智慧...' vs '體面不失分寸的溝通智慧電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 體面不失分寸的溝通智慧
+2025-11-14 10:18:31 -        [1] 體面不失分寸的溝通智慧電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 體面：不失分寸的溝通智慧
+2025-11-14 10:18:31 -        - 體面：不失分寸的溝通智慧(電子書)
+2025-11-14 10:18:31 - 合併 #26: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-06998, Title: 體面：不失分寸的溝通智慧
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-07000 / E253-06999, Title: 體面：不失分寸的溝通智慧(電子書)
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-06998 / E253-07000 / E253-06999
+2025-11-14 10:18:31 -   合併後 ISBN: 8969000029815 / 9787576719444 / （空白）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_35.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_36.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_36.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '讓孩子說出自信力依柔老師帶領孩子學會自信表達的7堂溝通素養課符合108課綱核心素養隨書附互動影音qr...' vs '讓孩子說出自信力依柔老師帶領孩子學會自信表達的7堂溝通素養課符合108課綱核心素養隨書附互動影音QR...' → 相似度: 0.9948 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 讓孩子說出自信力依柔老師帶領孩子學會自信表達的7堂溝通素養課符合108課綱核心素養隨書附互動影音qrcode
+2025-11-14 10:18:31 -        [1] 讓孩子說出自信力依柔老師帶領孩子學會自信表達的7堂溝通素養課符合108課綱核心素養隨書附互動影音QRCode電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 讓孩子說出自信力：依柔老師帶領孩子學會自信表達的7堂溝通素養課【符合108課綱核心素養、隨書附互動影音QRCode】
+2025-11-14 10:18:31 -        - 讓孩子說出自信力：依柔老師帶領孩子學會自信表達的7堂溝通素養課【符合108課綱核心素養、隨書附互動影音QRCode】(電
+2025-11-14 10:18:31 - 合併 #27: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-07008, Title: 讓孩子說出自信力：依柔老師帶領孩子學會自信表達的7堂溝通素養課【符合108課綱核心素養、隨書附互動影
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-07009, Title: 讓孩子說出自信力：依柔老師帶領孩子學會自信表達的7堂溝通素養課【符合108課綱核心素養、隨書附互動影
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-07008 / E253-07009
+2025-11-14 10:18:31 -   合併後 ISBN: 9786267680520 / 9786267680544
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_36.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_37.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_37.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_37.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_38.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_38.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_38.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_39.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_39.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '欖仁媽媽全球新聞臺生活篇小故事讀懂世界成為守護SDGs的地球小公民電子書...' vs '欖仁媽媽全球新聞臺生活篇小故事讀懂世界成為守護SDGs的地球小公民電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 欖仁媽媽全球新聞臺生活篇小故事讀懂世界成為守護SDGs的地球小公民電子書
+2025-11-14 10:18:31 -        [1] 欖仁媽媽全球新聞臺生活篇小故事讀懂世界成為守護SDGs的地球小公民電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 欖仁媽媽全球新聞臺【生活篇】小故事讀懂世界，成為守護SDGs的地球小公民(電子書)
+2025-11-14 10:18:31 -        - 欖仁媽媽全球新聞臺【生活篇】小故事讀懂世界，成為守護SDGs的地球小公民(電子書)
+2025-11-14 10:18:31 - 合併 #28: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-07030 / E253-07029, Title: 欖仁媽媽全球新聞臺【生活篇】小故事讀懂世界，成為守護SDGs的地球小公民(電子書)
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-07030, Title: 欖仁媽媽全球新聞臺【生活篇】小故事讀懂世界，成為守護SDGs的地球小公民(電子書)
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-07030 / E253-07029 / E253-07030
+2025-11-14 10:18:31 -   合併後 ISBN: 
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_39.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_4.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_4.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '蔡志忠漫畫大珠慧海頓悟入道要門論電子書...' vs '蔡志忠漫畫大珠慧海頓悟入道要門論電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 蔡志忠漫畫大珠慧海頓悟入道要門論電子書
+2025-11-14 10:18:31 -        [1] 蔡志忠漫畫大珠慧海頓悟入道要門論電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 蔡志忠漫畫大珠慧海：頓悟入道要門論
+2025-11-14 10:18:31 -        - 蔡志忠漫畫大珠慧海：頓悟入道要門論(電子書)
+2025-11-14 10:18:31 - 合併 #29: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-06252 / E253-06251, Title: 蔡志忠漫畫大珠慧海：頓悟入道要門論
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-06253, Title: 蔡志忠漫畫大珠慧海：頓悟入道要門論(電子書)
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-06252 / E253-06251 / E253-06253
+2025-11-14 10:18:31 -   合併後 ISBN: 9786264330480
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_4.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_40.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_40.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_40.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_41.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_41.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_41.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_42.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_42.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_42.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_43.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_43.csv
+2025-11-14 10:18:31 -   - 讀取 6 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 15 次比較
+2025-11-14 10:18:31 -   - 識別出 6 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 6 筆 → 6 筆
+2025-11-14 10:18:31 - cluster_43.csv 處理結果: 6 筆 → 6 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 6 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 6 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_44.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_44.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_44.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_45.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_45.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_45.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_46.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_46.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_46.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_47.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_47.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_47.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_5.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_5.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '蔡志忠漫畫大珠慧海諸方門人參問語錄電子書...' vs '蔡志忠漫畫大珠慧海諸方門人參問語錄電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 蔡志忠漫畫大珠慧海諸方門人參問語錄電子書
+2025-11-14 10:18:31 -        [1] 蔡志忠漫畫大珠慧海諸方門人參問語錄電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 蔡志忠漫畫大珠慧海：諸方門人參問語錄
+2025-11-14 10:18:31 -        - 蔡志忠漫畫大珠慧海：諸方門人參問語錄(電子書)
+2025-11-14 10:18:31 - 合併 #30: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-06255 / E253-06254, Title: 蔡志忠漫畫大珠慧海：諸方門人參問語錄
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-06256, Title: 蔡志忠漫畫大珠慧海：諸方門人參問語錄(電子書)
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-06255 / E253-06254 / E253-06256
+2025-11-14 10:18:31 -   合併後 ISBN: 9786264330497
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_5.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_6.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_6.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_6.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_7.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_7.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_7.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_8.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_8.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 2 個獨立書籍（組）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 2 筆
+2025-11-14 10:18:31 - cluster_8.csv 處理結果: 2 筆 → 2 筆, 多書組: 0
+2025-11-14 10:18:31 -   💾 已追加 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 2 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_9.csv
+2025-11-14 10:18:31 - 開始處理: clustered_data\cluster_9.csv
+2025-11-14 10:18:31 -   - 讀取 2 筆資料
+2025-11-14 10:18:31 -   - 開始兩兩比較...
+2025-11-14 10:18:31 - BERT 比較: '樹冠羞避...' vs '樹冠羞避電子書...' → 相似度: 1.0000 → 相同
+2025-11-14 10:18:31 -     ✅ 找到相同書籍:
+2025-11-14 10:18:31 -        [0] 樹冠羞避
+2025-11-14 10:18:31 -        [1] 樹冠羞避電子書
+2025-11-14 10:18:31 -   - 完成 1 次比較
+2025-11-14 10:18:31 -   - 識別出 1 個獨立書籍（組）
+2025-11-14 10:18:31 -     📚 合併 2 本相同的書:
+2025-11-14 10:18:31 -        - 樹冠羞避
+2025-11-14 10:18:31 -        - 樹冠羞避(電子書)
+2025-11-14 10:18:31 - 合併 #31: 2 本書
+2025-11-14 10:18:31 -   [0] TAICCA_ID: E253-06406 / E253-06405, Title: 樹冠羞避
+2025-11-14 10:18:31 -   [1] TAICCA_ID: E253-06407, Title: 樹冠羞避(電子書)
+2025-11-14 10:18:31 -   合併後 TAICCA_ID: E253-06406 / E253-06405 / E253-06407
+2025-11-14 10:18:31 -   合併後 ISBN: 9789570877649.0 / （空白）
+2025-11-14 10:18:31 -   ✅ 處理完成: 2 筆 → 1 筆
+2025-11-14 10:18:31 -   📊 其中 1 組包含多本重複書籍
+2025-11-14 10:18:31 - cluster_9.csv 處理結果: 2 筆 → 1 筆, 多書組: 1
+2025-11-14 10:18:31 -   💾 已追加 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 已寫入 1 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - 
+📂 處理檔案: cluster_noise.csv
+2025-11-14 10:18:31 - 開始處理噪音檔案: clustered_data\cluster_noise.csv
+2025-11-14 10:18:31 -   - 讀取 49 筆資料
+2025-11-14 10:18:31 -   ⚡ 噪音檔案，直接寫入（跳過比較）
+2025-11-14 10:18:31 -   💾 已追加 49 筆資料到 final_merged_output.csv
+2025-11-14 10:18:31 - cluster_noise.csv: 直接寫入 49 筆資料（噪音檔案）
+2025-11-14 10:18:31 - 
+✅ 第二階段完成！去重合併已完成。
+2025-11-14 10:18:31 - 
+📊 第二階段統計:
+2025-11-14 10:18:31 -   - 原始總筆數: 184
+2025-11-14 10:18:31 -   - 輸出資料筆數: 153
+2025-11-14 10:18:31 -   - 合併減少: 31 筆
+2025-11-14 10:18:31 -   - 實際合併次數: 31
+2025-11-14 10:18:31 - 
+================================================================================
+2025-11-14 10:18:31 - 🎉 完整流程執行完畢！
+2025-11-14 10:18:31 - ================================================================================
+2025-11-14 10:18:31 -   - 總處理時間: 70.17 秒 (1.17 分鐘)
+2025-11-14 10:18:31 -   - 最終輸出檔案: final_merged_output.csv
+2025-11-14 10:18:31 -   - Log 檔案: process_books_log_20251114_101721.txt
+2025-11-14 10:18:31 -   - 分群檔案資料夾: clustered_data/
+2025-11-14 10:18:31 - ================================================================================
+2025-11-14 10:18:31 - 結束時間: 2025-11-14 10:18:31
+2025-11-14 10:18:31 - 總執行時間: 70.17 秒
+2025-11-14 10:18:31 - ================================================================================

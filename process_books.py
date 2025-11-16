@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 書籍處理完整流程
-1. Embedding 分群
-2. LLM 去重合併
+1. OpenAI Embedding 分群（DBSCAN）
+2. BERT 去重合併（支援多本書合併）
 """
 
 import pandas as pd
@@ -14,19 +14,36 @@ import json
 import time
 import logging
 import argparse
+import re
 from datetime import datetime
 from tqdm import tqdm
-from openai import OpenAI
 from sklearn.cluster import DBSCAN
+try:
+    from sentence_transformers import SentenceTransformer, util
+    BERT_AVAILABLE = True
+except ImportError:
+    print("警告: sentence-transformers 未安裝，將無法使用 BERT")
+    BERT_AVAILABLE = False
+
+try:
+    import cn2an
+except ImportError:
+    print("警告: cn2an 未安裝，將無法進行數字標準化比較")
+    cn2an = None
 
 # ==================== 全域設定 ====================
-OPENAI_API_KEY = "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"
-client = OpenAI(api_key=OPENAI_API_KEY)
 
-# Embedding 設定
+# OpenAI 設定
+OPENAI_API_KEY = "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"
+
+# OpenAI Embedding 設定（僅用於第一階段）
 EMBEDDING_MODEL = "text-embedding-3-small"
-EPS = 0.5           # DBSCAN 鄰域半徑
+EPS = 0.15           # DBSCAN 鄰域半徑
 MIN_SAMPLES = 2     # DBSCAN 最小樣本數
+
+# BERT 設定
+BERT_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
+SIMILARITY_THRESHOLD = 0.99  # BERT 相似度閾值
 
 # 輸出設定
 CLUSTERED_DATA_DIR = "clustered_data"
@@ -36,8 +53,9 @@ FINAL_OUTPUT_FILE = "final_merged_output.csv"
 LOG_FILE = f"process_books_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
 # 全域計數器
-api_call_count = 0
 merge_count = 0
+bert_model = None  # BERT 模型全域變數
+openai_client = None  # OpenAI 客戶端全域變數
 
 # ==================== 輔助函數 ====================
 
@@ -54,13 +72,20 @@ def log_and_print(message, level='info'):
 # ==================== 第一階段：Embedding 分群 ====================
 
 def get_embedding(text, model=EMBEDDING_MODEL):
-    """取得文字的 embedding 向量"""
+    """取得文字的 embedding 向量（使用 OpenAI API）"""
+    global openai_client
+    
     if pd.isna(text) or not str(text).strip():
         return None
     
     try:
+        # 初始化 OpenAI 客戶端（只初始化一次）
+        if openai_client is None:
+            from openai import OpenAI
+            openai_client = OpenAI(api_key=OPENAI_API_KEY)
+        
         text = str(text).replace("\n", " ")
-        response = client.embeddings.create(
+        response = openai_client.embeddings.create(
             input=text,
             model=model
         )
@@ -83,13 +108,48 @@ def stage1_embedding_clustering(input_file):
     log_and_print(f"✅ 讀取完成！總共 {len(df)} 筆資料")
     logging.info(f"讀取檔案: {input_file}, 筆數: {len(df)}")
     
-    # 步驟 2: 計算 Embedding
+    # 步驟 2: 清理 processed_title（移除「電子書」字樣）
+    log_and_print(f"\n🧹 清理標題...")
+    def clean_ebook_text(title):
+        """移除標題中的「電子書」相關字樣"""
+        if pd.isna(title) or not str(title).strip():
+            return title
+        
+        title = str(title)
+        patterns_to_remove = [
+            r'\(電子書\)',
+            r'（電子書）',
+            r'\[電子書\]',
+            r'【電子書】',
+            r'電子書',
+            r'\(ebook\)',
+            r'（ebook）',
+            r'ebook',
+            r'e-book',
+            r'限',
+            r'限制級',
+            r'\(限\)',
+            r'（限）',
+        ]
+        
+        for pattern in patterns_to_remove:
+            title = re.sub(pattern, '', title, flags=re.IGNORECASE)
+        
+        # 清理多餘空格
+        title = ' '.join(title.split())
+        return title.strip()
+    
+    df['processed_title_clean'] = df['processed_title'].apply(clean_ebook_text)
+    log_and_print(f"✅ 標題清理完成")
+    
+    # 步驟 3: 計算 Embedding
     log_and_print(f"\n🔄 開始計算 embeddings...")
     log_and_print(f"總共需要處理 {len(df)} 筆資料")
     
     embeddings = []
     for idx, row in tqdm(df.iterrows(), total=len(df), desc="生成 Embeddings"):
-        embedding = get_embedding(row['title'])
+        # 使用清理後的標題計算 embedding
+        embedding = get_embedding(row['processed_title_clean'])
         embeddings.append(embedding)
     
     df['embedding'] = embeddings
@@ -103,12 +163,15 @@ def stage1_embedding_clustering(input_file):
     log_and_print(f"  - 失敗: {invalid_embeddings} 筆")
     logging.info(f"Embedding 統計: 成功 {valid_embeddings} 筆, 失敗 {invalid_embeddings} 筆")
     
+    # 移除臨時的清理欄位
+    df = df.drop(columns=['processed_title_clean'])
+    
     # 儲存包含 embedding 的資料
     embedding_file = 'data_with_embeddings.csv'
     df.to_csv(embedding_file, index=False, encoding='utf-8-sig')
     log_and_print(f"💾 已儲存包含 embeddings 的資料至: {embedding_file}")
     
-    # 步驟 3: 準備分群資料
+    # 步驟 4: 準備分群資料
     log_and_print(f"\n📊 準備分群資料...")
     df_valid = df[df['embedding'].notna()].copy()
     log_and_print(f"  - 有效資料: {len(df_valid)} 筆")
@@ -116,16 +179,21 @@ def stage1_embedding_clustering(input_file):
     embeddings_array = np.array(df_valid['embedding'].tolist())
     log_and_print(f"  - Embedding 矩陣形狀: {embeddings_array.shape}")
     
-    # 步驟 4: 執行 DBSCAN 分群
+    # 步驟 5: 執行 DBSCAN 分群（使用 recluster_only.py 的邏輯）
     log_and_print(f"\n🎯 執行 DBSCAN 分群...")
     log_and_print(f"  - eps (鄰域半徑): {EPS}")
     log_and_print(f"  - min_samples (最小樣本數): {MIN_SAMPLES}")
-    logging.info(f"DBSCAN 參數: eps={EPS}, min_samples={MIN_SAMPLES}")
+    log_and_print(f"  - 使用 cosine 距離")
+    logging.info(f"DBSCAN 參數: eps={EPS}, min_samples={MIN_SAMPLES}, metric=cosine")
     
-    dbscan = DBSCAN(eps=EPS, min_samples=MIN_SAMPLES, metric='cosine')
-    cluster_labels = dbscan.fit_predict(embeddings_array)
-    
-    df_valid['cluster'] = cluster_labels
+    try:
+        dbscan = DBSCAN(eps=EPS, min_samples=MIN_SAMPLES, metric='cosine', n_jobs=-1)
+        cluster_labels = dbscan.fit_predict(embeddings_array)
+        df_valid['cluster'] = cluster_labels
+        log_and_print(f"  ✅ DBSCAN 分群完成")
+    except Exception as e:
+        log_and_print(f"  ❌ DBSCAN 分群失敗: {e}", 'error')
+        raise
     
     # 統計分群結果
     n_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)
@@ -150,7 +218,7 @@ def stage1_embedding_clustering(input_file):
             percentage = (n_noise / len(df_valid)) * 100
             log_and_print(f"  噪音: {n_noise:>5} 筆 ({percentage:>5.1f}%)")
     
-    # 步驟 5: 拆分並儲存 CSV
+    # 步驟 6: 拆分並儲存 CSV
     log_and_print(f"\n💾 開始拆分並儲存 CSV 檔案...")
     log_and_print(f"  - 輸出資料夾: {CLUSTERED_DATA_DIR}")
     
@@ -190,58 +258,168 @@ def stage1_embedding_clustering(input_file):
         'n_noise': n_noise
     }
 
-# ==================== 第二階段：LLM 去重合併 ====================
+# ==================== 第二階段：BERT 去重合併 ====================
 
-def check_same_book_with_llm(title1, title2):
-    """使用 OpenAI LLM 判斷兩本書是否相同"""
-    global api_call_count
+class UnionFind:
+    """並查集，用於管理書籍分組"""
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
     
-    prompt = f"""請判斷以下兩本書的標題是否指向同一本書。
-請只回答 "YES" 或 "NO"，不要有其他文字。
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+    
+    def get_groups(self):
+        """取得所有分組"""
+        groups = {}
+        for i in range(len(self.parent)):
+            root = self.find(i)
+            if root not in groups:
+                groups[root] = []
+            groups[root].append(i)
+        return list(groups.values())
 
-書籍1: {title1}
-書籍2: {title2}
-
-判斷標準：
-- 標題完全相同或只有細微差異（如標點符號、空格）→ YES
-- 同一系列但不同集數 → NO
-- 完全不同的書 → NO
-
-回答 (YES/NO):"""
-
+def normalize_numbers_in_title(title):
+    """
+    將標題中的數字統一轉換為阿拉伯數字格式（用於比較）
+    處理：中文數字（一二三）、阿拉伯數字（1 2 3）、全形數字（１２３）
+    """
+    if not cn2an or not title:
+        return title
+    
+    normalized = title
+    
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "你是一個圖書館管理專家，專門判斷書籍是否相同。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0,
-            max_tokens=10
-        )
+        # 1. 轉換全形數字為半形
+        full_to_half = str.maketrans('０１２３４５６７８９', '0123456789')
+        normalized = normalized.translate(full_to_half)
         
-        api_call_count += 1
-        answer = response.choices[0].message.content.strip().upper()
-        result = "YES" in answer
+        # 2. 找出所有中文數字模式並轉換
+        # 匹配：第一集、第二十三章、卷三、Vol.五、等等
+        chinese_num_pattern = r'[一二三四五六七八九十百千萬零壹貳參肆伍陸柒捌玖拾佰仟]+'
         
-        logging.info(f"API 呼叫 #{api_call_count}: 比較 '{title1[:50]}...' vs '{title2[:50]}...' → {result}")
+        def replace_chinese_num(match):
+            chinese_num = match.group(0)
+            try:
+                # 使用 cn2an 轉換中文數字為阿拉伯數字
+                arabic_num = cn2an.cn2an(chinese_num, "smart")
+                return str(arabic_num)
+            except:
+                return chinese_num  # 轉換失敗則保持原樣
         
-        return result
+        normalized = re.sub(chinese_num_pattern, replace_chinese_num, normalized)
         
     except Exception as e:
-        error_msg = f"  ⚠️ LLM 判斷錯誤: {e}"
-        log_and_print(error_msg, 'error')
+        logging.warning(f"數字標準化失敗: {e}, 標題: {title[:50]}")
+        return title
+    
+    return normalized
+
+def clean_title_for_bert(title):
+    """清理標題用於 BERT 比較（移除電子書、限制級等標記）"""
+    if pd.isna(title) or not str(title).strip():
+        return ""
+    
+    title = str(title).strip()
+    
+    # 移除常見的標記和干擾字樣
+    patterns_to_remove = [
+        # 電子書相關
+        r'\(電子書\)',
+        r'（電子書）',
+        r'\[電子書\]',
+        r'【電子書】',
+        r'電子書',
+        r'\(ebook\)',
+        r'（ebook）',
+        r'ebook',
+        r'e-book',
+        # 限制級相關
+        r'\(限\)',
+        r'（限）',
+        r'\[限\]',
+        r'【限】',
+        r'限$',  # 結尾的「限」
+        r'限制級',
+        r'18\+',
+        r'18禁',
+        # 其他常見干擾字樣
+        r'\(完\)',
+        r'（完）',
+        r'\(新版\)',
+        r'（新版）',
+        r'\(修訂版\)',
+        r'（修訂版）',
+        r'\(全\)',
+        r'（全）',
+    ]
+    
+    for pattern in patterns_to_remove:
+        title = re.sub(pattern, ' ', title, flags=re.IGNORECASE)
+    
+    # 清理多餘空格
+    title = ' '.join(title.split())
+    return title.strip()
+
+def check_same_book_with_bert(title1, title2):
+    """使用 BERT 判斷兩本書是否相同（比較前先標準化數字）"""
+    global bert_model
+    
+    if not BERT_AVAILABLE or bert_model is None:
+        logging.error("BERT 模型未載入")
+        return False
+    
+    if not title1 or not title2:
+        return False
+    
+    # 清理標題
+    cleaned_title1 = clean_title_for_bert(title1)
+    cleaned_title2 = clean_title_for_bert(title2)
+    
+    if not cleaned_title1 or not cleaned_title2:
+        return False
+    
+    # 標準化數字後再比較
+    normalized_title1 = normalize_numbers_in_title(cleaned_title1)
+    normalized_title2 = normalize_numbers_in_title(cleaned_title2)
+    
+    try:
+        # 計算 embeddings
+        embedding1 = bert_model.encode(normalized_title1, convert_to_tensor=True)
+        embedding2 = bert_model.encode(normalized_title2, convert_to_tensor=True)
+        
+        # 計算 cosine 相似度
+        similarity = util.cos_sim(embedding1, embedding2).item()
+        
+        # 判斷是否為同一本書
+        is_same = similarity >= SIMILARITY_THRESHOLD
+        
+        if is_same:
+            logging.info(f"BERT 比較: '{title1[:50]}...' vs '{title2[:50]}...' → 相似度: {similarity:.4f} → 相同")
+            if normalized_title1 != cleaned_title1 or normalized_title2 != cleaned_title2:
+                logging.info(f"  標準化後: '{normalized_title1[:50]}...' vs '{normalized_title2[:50]}...'")
+        
+        return is_same
+        
+    except Exception as e:
+        error_msg = f"  ⚠️ BERT 判斷錯誤: {e}"
+        logging.error(error_msg)
         return False
 
 def merge_two_books(book1, book2):
-    """合併兩本書的資料"""
-    global merge_count
-    merge_count += 1
-    
-    logging.info(f"合併 #{merge_count}:")
-    logging.info(f"  被合併者 TAICCA_ID: {book1.get('NEW_TAICCA_ID', 'N/A')}, Title: {book1.get('title', 'N/A')[:50]}")
-    logging.info(f"  合併者 TAICCA_ID: {book2.get('NEW_TAICCA_ID', 'N/A')}, Title: {book2.get('title', 'N/A')[:50]}")
-    
+    """合併兩本書的資料（內部使用，不增加計數器）"""
     merged = {}
     
     # TAICCA_ID 系列：以斜線分隔
@@ -263,7 +441,7 @@ def merge_two_books(book1, book2):
             merged[col] = ''
     
     # isbn 系列：特殊處理
-    for col in ['isbn', 'eisbn']:
+    for col in ['isbn', 'eisbn', '未納入書目FIND']:
         val1 = str(book1.get(col, '')).strip() if pd.notna(book1.get(col)) else ''
         val2 = str(book2.get(col, '')).strip() if pd.notna(book2.get(col)) else ''
         
@@ -355,13 +533,36 @@ def merge_two_books(book1, book2):
     else:
         merged['price'] = book1.get('price', '')
     
-    logging.info(f"  合併後 TAICCA_ID: {merged.get('NEW_TAICCA_ID', 'N/A')}")
-    logging.info(f"  合併後 ISBN: {merged.get('isbn', 'N/A')}")
-    
     return merged
 
+def merge_multiple_books(books):
+    """合併多本書的資料"""
+    global merge_count
+    
+    if len(books) == 0:
+        return None
+    if len(books) == 1:
+        return books[0]
+    
+    merge_count += 1
+    
+    # 記錄合併資訊
+    logging.info(f"合併 #{merge_count}: {len(books)} 本書")
+    for i, book in enumerate(books):
+        logging.info(f"  [{i}] TAICCA_ID: {book.get('NEW_TAICCA_ID', 'N/A')}, Title: {book.get('title', 'N/A')[:50]}")
+    
+    # 以第一本書為基礎，逐一合併其他書
+    result = books[0]
+    for i in range(1, len(books)):
+        result = merge_two_books(result, books[i])
+    
+    logging.info(f"  合併後 TAICCA_ID: {result.get('NEW_TAICCA_ID', 'N/A')}")
+    logging.info(f"  合併後 ISBN: {result.get('isbn', 'N/A')}")
+    
+    return result
+
 def process_cluster_file(csv_file):
-    """處理單個分群檔案"""
+    """處理單個分群檔案（支援多本書合併）"""
     filename = os.path.basename(csv_file)
     log_and_print(f"\n📂 處理檔案: {filename}")
     logging.info(f"開始處理: {csv_file}")
@@ -374,58 +575,98 @@ def process_cluster_file(csv_file):
         return []
     
     books = df.to_dict('records')
-    merged_indices = set()
-    result_books = []
+    n = len(books)
     
-    for i in tqdm(range(len(books)), desc="  比較書籍"):
-        if i in merged_indices:
+    # 使用並查集管理書籍分組
+    uf = UnionFind(n)
+    
+    log_and_print(f"  - 開始兩兩比較...")
+    comparison_count = 0
+    total_comparisons = n * (n - 1) // 2
+    
+    # 兩兩比較所有書籍
+    for i in tqdm(range(n), desc="  比較書籍"):
+        title1 = str(books[i].get('processed_title', '') or books[i].get('title', '')).strip()
+        if not title1:
             continue
         
-        current_book = books[i]
-        found_match = False
-        
-        for j in range(i + 1, len(books)):
-            if j in merged_indices:
+        for j in range(i + 1, n):
+            title2 = str(books[j].get('processed_title', '') or books[j].get('title', '')).strip()
+            if not title2:
                 continue
             
-            compare_book = books[j]
+            comparison_count += 1
             
-            title1 = str(current_book.get('title', '')).strip()
-            title2 = str(compare_book.get('title', '')).strip()
-            
-            if not title1 or not title2:
-                continue
-            
-            is_same = check_same_book_with_llm(title1, title2)
+            # 使用 BERT 判斷是否為同一本書
+            is_same = check_same_book_with_bert(title1, title2)
             
             if is_same:
                 log_and_print(f"    ✅ 找到相同書籍:")
-                log_and_print(f"       [{i}] {title1}")
-                log_and_print(f"       [{j}] {title2}")
+                log_and_print(f"       [{i}] {title1[:60]}")
+                log_and_print(f"       [{j}] {title2[:60]}")
                 
-                merged_book = merge_two_books(compare_book, current_book)
-                result_books.append(merged_book)
-                
-                merged_indices.add(i)
-                merged_indices.add(j)
-                found_match = True
-                break
-        
-        if not found_match:
-            result_books.append(current_book)
+                # 將兩本書加入同一組
+                uf.union(i, j)
     
-    log_and_print(f"  ✅ 處理完成: {len(result_books)} 筆資料")
-    logging.info(f"{filename} 處理結果: {len(df)} 筆 → {len(result_books)} 筆")
+    log_and_print(f"  - 完成 {comparison_count} 次比較")
+    
+    # 取得所有分組
+    groups = uf.get_groups()
+    log_and_print(f"  - 識別出 {len(groups)} 個獨立書籍（組）")
+    
+    # 對每一組進行合併
+    result_books = []
+    multi_book_groups = 0
+    
+    for group_indices in groups:
+        group_books = [books[i] for i in group_indices]
+        
+        if len(group_books) > 1:
+            multi_book_groups += 1
+            log_and_print(f"    📚 合併 {len(group_books)} 本相同的書:")
+            for idx in group_indices:
+                book_title = str(books[idx].get('title', ''))[:60]
+                log_and_print(f"       - {book_title}")
+            
+            # 合併多本書
+            merged_book = merge_multiple_books(group_books)
+            result_books.append(merged_book)
+        else:
+            # 單獨的書直接加入
+            result_books.append(group_books[0])
+    
+    log_and_print(f"  ✅ 處理完成: {len(df)} 筆 → {len(result_books)} 筆")
+    if multi_book_groups > 0:
+        log_and_print(f"  📊 其中 {multi_book_groups} 組包含多本重複書籍")
+    
+    logging.info(f"{filename} 處理結果: {len(df)} 筆 → {len(result_books)} 筆, 多書組: {multi_book_groups}")
     
     return result_books
 
-def stage2_llm_deduplication():
+def stage2_bert_deduplication():
     """
-    第二階段：讀取分群檔案、使用 LLM 判斷並合併
+    第二階段：讀取分群檔案、使用 BERT 判斷並合併
     """
+    global bert_model
+    
     log_and_print("\n" + "=" * 80)
-    log_and_print("🤖 第二階段：LLM 去重合併")
+    log_and_print("🤖 第二階段：BERT 去重合併")
     log_and_print("=" * 80)
+    
+    # 載入 BERT 模型
+    if not BERT_AVAILABLE:
+        log_and_print("❌ sentence-transformers 未安裝，無法使用 BERT", 'error')
+        log_and_print("請執行: pip install sentence-transformers", 'error')
+        return None
+    
+    log_and_print(f"\n載入 BERT 模型: {BERT_MODEL}")
+    try:
+        bert_model = SentenceTransformer(BERT_MODEL)
+        log_and_print(f"✅ BERT 模型載入完成")
+        log_and_print(f"相似度閾值: {SIMILARITY_THRESHOLD}")
+    except Exception as e:
+        log_and_print(f"❌ BERT 模型載入失敗: {e}", 'error')
+        return None
     
     # 讀取所有分群檔案
     cluster_files = glob.glob(os.path.join(CLUSTERED_DATA_DIR, "cluster_*.csv"))
@@ -497,28 +738,29 @@ def stage2_llm_deduplication():
     return {
         'total_original': total_original,
         'total_output': total_output,
-        'api_calls': api_call_count,
         'merges': merge_count
     }
 
 # ==================== 主程式 ====================
 
 def main():
-    global api_call_count, merge_count
+    global merge_count
     
     # 解析命令行參數
-    parser = argparse.ArgumentParser(description='書籍處理完整流程：Embedding 分群 + LLM 去重合併')
+    parser = argparse.ArgumentParser(description='書籍處理完整流程：Embedding 分群 + BERT 去重合併')
     parser.add_argument('input_file', type=str, help='輸入的 CSV 檔案路徑')
-    parser.add_argument('--eps', type=float, default=0.5, help='DBSCAN eps 參數 (預設: 0.5)')
+    parser.add_argument('--eps', type=float, default=0.15, help='DBSCAN eps 參數 (預設: 0.15)')
     parser.add_argument('--min-samples', type=int, default=2, help='DBSCAN min_samples 參數 (預設: 2)')
-    parser.add_argument('--skip-embedding', action='store_true', help='跳過 embedding 階段，直接進行 LLM 去重')
+    parser.add_argument('--similarity', type=float, default=0.99, help='BERT 相似度閾值 (預設: 0.99)')
+    parser.add_argument('--skip-embedding', action='store_true', help='跳過 embedding 階段，直接進行 BERT 去重')
     
     args = parser.parse_args()
     
     # 更新全域參數
-    global EPS, MIN_SAMPLES
+    global EPS, MIN_SAMPLES, SIMILARITY_THRESHOLD
     EPS = args.eps
     MIN_SAMPLES = args.min_samples
+    SIMILARITY_THRESHOLD = args.similarity
     
     # 初始化 logging
     logging.basicConfig(
@@ -546,6 +788,7 @@ def main():
     log_and_print(f"\n📋 執行設定:")
     log_and_print(f"  - 輸入檔案: {args.input_file}")
     log_and_print(f"  - DBSCAN 參數: eps={EPS}, min_samples={MIN_SAMPLES}")
+    log_and_print(f"  - BERT 相似度閾值: {SIMILARITY_THRESHOLD}")
     log_and_print(f"  - 最終輸出: {FINAL_OUTPUT_FILE}")
     log_and_print(f"  - Log 檔案: {LOG_FILE}")
     
@@ -567,15 +810,14 @@ def main():
         else:
             log_and_print("\n⚠️ 跳過 embedding 階段，使用現有分群檔案")
         
-        # 第二階段：LLM 去重合併
-        stage2_result = stage2_llm_deduplication()
+        # 第二階段：BERT 去重合併
+        stage2_result = stage2_bert_deduplication()
         
         if stage2_result:
             log_and_print(f"\n📊 第二階段統計:")
             log_and_print(f"  - 原始總筆數: {stage2_result['total_original']}")
             log_and_print(f"  - 輸出資料筆數: {stage2_result['total_output']}")
             log_and_print(f"  - 合併減少: {stage2_result['total_original'] - stage2_result['total_output']} 筆")
-            log_and_print(f"  - LLM API 呼叫次數: {stage2_result['api_calls']}")
             log_and_print(f"  - 實際合併次數: {stage2_result['merges']}")
         
         # 計算總執行時間
@@ -605,3 +847,4 @@ def main():
 if __name__ == "__main__":
     main()
 
+# python process_books.py input.csv

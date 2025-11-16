@@ -1,0 +1,585 @@
+2025-11-14 09:43:14 - ================================================================================
+📚 書籍處理完整流程系統
+================================================================================
+2025-11-14 09:43:14 - 開始時間: 2025-11-14 09:43:14
+2025-11-14 09:43:14 - Log 檔案: process_books_log_20251114_094314.txt
+2025-11-14 09:43:14 - 輸入檔案: input_data\7000.csv
+2025-11-14 09:43:14 - 最終輸出檔案: final_merged_output.csv
+2025-11-14 09:43:14 - DBSCAN 參數: eps=0.5, min_samples=2
+2025-11-14 09:43:14 - 
+📋 執行設定:
+2025-11-14 09:43:14 -   - 輸入檔案: input_data\7000.csv
+2025-11-14 09:43:14 -   - DBSCAN 參數: eps=0.5, min_samples=2
+2025-11-14 09:43:14 -   - 最終輸出: final_merged_output.csv
+2025-11-14 09:43:14 -   - Log 檔案: process_books_log_20251114_094314.txt
+2025-11-14 09:43:14 - 
+================================================================================
+2025-11-14 09:43:14 - 📊 第一階段：Embedding 分群
+2025-11-14 09:43:14 - ================================================================================
+2025-11-14 09:43:14 - 
+📂 讀取資料: input_data\7000.csv
+2025-11-14 09:43:14 - ✅ 讀取完成！總共 184 筆資料
+2025-11-14 09:43:14 - 讀取檔案: input_data\7000.csv, 筆數: 184
+2025-11-14 09:43:14 - 
+🔄 開始計算 embeddings...
+2025-11-14 09:43:14 - 總共需要處理 184 筆資料
+2025-11-14 09:43:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:22 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:23 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:24 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:25 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:26 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:27 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:28 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:29 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:29 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:30 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:31 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:31 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:31 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:32 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:33 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:34 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:35 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:36 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:37 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:38 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:38 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:39 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:40 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:41 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:42 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:43 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:43 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:43 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:44 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:45 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:45 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:45 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:46 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:47 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:48 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:49 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:49 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:49 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:50 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:50 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:51 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:52 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:53 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:54 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:55 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:56 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:57 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:57 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:58 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:43:59 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:00 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:01 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:02 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:03 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:04 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:05 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:06 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:07 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:08 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:09 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:09 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:09 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:10 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:11 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:12 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:13 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:14 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:15 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:16 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:17 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:18 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:19 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:20 - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-11-14 09:44:20 - 
+✅ Embedding 生成完成！
+2025-11-14 09:44:20 -   - 成功: 184 筆
+2025-11-14 09:44:20 -   - 失敗: 0 筆
+2025-11-14 09:44:20 - Embedding 統計: 成功 184 筆, 失敗 0 筆
+2025-11-14 09:44:21 - 💾 已儲存包含 embeddings 的資料至: data_with_embeddings.csv
+2025-11-14 09:44:21 - 
+📊 準備分群資料...
+2025-11-14 09:44:21 -   - 有效資料: 184 筆
+2025-11-14 09:44:21 -   - Embedding 矩陣形狀: (184, 1536)
+2025-11-14 09:44:21 - 
+🎯 執行 DBSCAN 分群...
+2025-11-14 09:44:21 -   - eps (鄰域半徑): 0.5
+2025-11-14 09:44:21 -   - min_samples (最小樣本數): 2
+2025-11-14 09:44:21 - DBSCAN 參數: eps=0.5, min_samples=2
+2025-11-14 09:44:21 - 
+✅ 分群完成！
+2025-11-14 09:44:21 -   - 識別出的群數: 26
+2025-11-14 09:44:21 -   - 噪音點: 3 筆
+2025-11-14 09:44:21 - 分群結果: 26 個群, 3 個噪音點
+2025-11-14 09:44:21 - 
+📊 各群的資料筆數：
+2025-11-14 09:44:21 -   群 0:   126 筆 ( 68.5%)
+2025-11-14 09:44:21 -   群 1:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 2:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 3:     3 筆 (  1.6%)
+2025-11-14 09:44:21 -   群 4:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 5:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 6:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 7:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 8:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 9:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 10:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 11:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 12:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 13:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 14:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 15:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 16:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 17:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 18:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 19:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 20:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 21:     6 筆 (  3.3%)
+2025-11-14 09:44:21 -   群 22:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 23:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 24:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   群 25:     2 筆 (  1.1%)
+2025-11-14 09:44:21 -   噪音:     3 筆 (  1.6%)
+2025-11-14 09:44:21 - 
+💾 開始拆分並儲存 CSV 檔案...
+2025-11-14 09:44:21 -   - 輸出資料夾: clustered_data
+2025-11-14 09:44:21 -   ✅ 噪音點: 3 筆 → clustered_data\cluster_noise.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_noise.csv, 筆數: 3
+2025-11-14 09:44:21 -   ✅ 群 0: 126 筆 → clustered_data\cluster_0.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_0.csv, 筆數: 126
+2025-11-14 09:44:21 -   ✅ 群 1: 2 筆 → clustered_data\cluster_1.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_1.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 2: 2 筆 → clustered_data\cluster_2.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_2.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 3: 3 筆 → clustered_data\cluster_3.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_3.csv, 筆數: 3
+2025-11-14 09:44:21 -   ✅ 群 4: 2 筆 → clustered_data\cluster_4.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_4.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 5: 2 筆 → clustered_data\cluster_5.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_5.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 6: 2 筆 → clustered_data\cluster_6.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_6.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 7: 2 筆 → clustered_data\cluster_7.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_7.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 8: 2 筆 → clustered_data\cluster_8.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_8.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 9: 2 筆 → clustered_data\cluster_9.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_9.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 10: 2 筆 → clustered_data\cluster_10.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_10.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 11: 2 筆 → clustered_data\cluster_11.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_11.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 12: 2 筆 → clustered_data\cluster_12.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_12.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 13: 2 筆 → clustered_data\cluster_13.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_13.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 14: 2 筆 → clustered_data\cluster_14.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_14.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 15: 2 筆 → clustered_data\cluster_15.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_15.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 16: 2 筆 → clustered_data\cluster_16.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_16.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 17: 2 筆 → clustered_data\cluster_17.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_17.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 18: 2 筆 → clustered_data\cluster_18.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_18.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 19: 2 筆 → clustered_data\cluster_19.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_19.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 20: 2 筆 → clustered_data\cluster_20.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_20.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 21: 6 筆 → clustered_data\cluster_21.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_21.csv, 筆數: 6
+2025-11-14 09:44:21 -   ✅ 群 22: 2 筆 → clustered_data\cluster_22.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_22.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 23: 2 筆 → clustered_data\cluster_23.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_23.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 24: 2 筆 → clustered_data\cluster_24.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_24.csv, 筆數: 2
+2025-11-14 09:44:21 -   ✅ 群 25: 2 筆 → clustered_data\cluster_25.csv
+2025-11-14 09:44:21 - 儲存分群檔案: clustered_data\cluster_25.csv, 筆數: 2
+2025-11-14 09:44:21 - 
+  📊 完整資料（含分群標籤）: clustered_data\full_data_with_clusters.csv
+2025-11-14 09:44:21 - 
+✅ 第一階段完成！分群檔案已儲存。
+2025-11-14 09:44:21 - 
+📊 第一階段統計:
+2025-11-14 09:44:21 -   - 總資料筆數: 184
+2025-11-14 09:44:21 -   - 有效資料筆數: 184
+2025-11-14 09:44:21 -   - 識別出的群數: 26
+2025-11-14 09:44:21 -   - 噪音點: 3
+2025-11-14 09:44:21 -   - 生成檔案數: 27
+2025-11-14 09:44:21 - 
+================================================================================
+2025-11-14 09:44:21 - 🤖 第二階段：LLM 去重合併
+2025-11-14 09:44:21 - ================================================================================
+2025-11-14 09:44:21 - 
+找到 27 個分群檔案:
+2025-11-14 09:44:21 -   - cluster_0.csv
+2025-11-14 09:44:21 -   - cluster_1.csv
+2025-11-14 09:44:21 -   - cluster_10.csv
+2025-11-14 09:44:21 -   - cluster_11.csv
+2025-11-14 09:44:21 -   - cluster_12.csv
+2025-11-14 09:44:21 -   - cluster_13.csv
+2025-11-14 09:44:21 -   - cluster_14.csv
+2025-11-14 09:44:21 -   - cluster_15.csv
+2025-11-14 09:44:21 -   - cluster_16.csv
+2025-11-14 09:44:21 -   - cluster_17.csv
+2025-11-14 09:44:21 -   - cluster_18.csv
+2025-11-14 09:44:21 -   - cluster_19.csv
+2025-11-14 09:44:21 -   - cluster_2.csv
+2025-11-14 09:44:21 -   - cluster_20.csv
+2025-11-14 09:44:21 -   - cluster_21.csv
+2025-11-14 09:44:21 -   - cluster_22.csv
+2025-11-14 09:44:21 -   - cluster_23.csv
+2025-11-14 09:44:21 -   - cluster_24.csv
+2025-11-14 09:44:21 -   - cluster_25.csv
+2025-11-14 09:44:21 -   - cluster_3.csv
+2025-11-14 09:44:21 -   - cluster_4.csv
+2025-11-14 09:44:21 -   - cluster_5.csv
+2025-11-14 09:44:21 -   - cluster_6.csv
+2025-11-14 09:44:21 -   - cluster_7.csv
+2025-11-14 09:44:21 -   - cluster_8.csv
+2025-11-14 09:44:21 -   - cluster_9.csv
+2025-11-14 09:44:21 -   - cluster_noise.csv
+2025-11-14 09:44:21 - 
+📂 處理檔案: cluster_0.csv
+2025-11-14 09:44:21 - 開始處理: clustered_data\cluster_0.csv
+2025-11-14 09:44:21 -   - 讀取 126 筆資料
+2025-11-14 09:44:21 -   - 開始兩兩比較...
+2025-11-14 09:44:22 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:22 - API 呼叫 #1: 比較 '熟女記47...' vs '熟女記48...' → False
+2025-11-14 09:44:25 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:25 - API 呼叫 #2: 比較 '熟女記47...' vs '熟女記49...' → False
+2025-11-14 09:44:26 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:26 - API 呼叫 #3: 比較 '熟女記47...' vs '熟女記50...' → False
+2025-11-14 09:44:27 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:27 - API 呼叫 #4: 比較 '熟女記47...' vs '熟女記51...' → False
+2025-11-14 09:44:28 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:28 - API 呼叫 #5: 比較 '熟女記47...' vs '熟女記52...' → False
+2025-11-14 09:44:28 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:28 - API 呼叫 #6: 比較 '熟女記47...' vs '熟女記53...' → False
+2025-11-14 09:44:30 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:30 - API 呼叫 #7: 比較 '熟女記47...' vs '熟女記54...' → False
+2025-11-14 09:44:30 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:30 - API 呼叫 #8: 比較 '熟女記47...' vs '熟女記47限...' → False
+2025-11-14 09:44:31 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:31 - API 呼叫 #9: 比較 '熟女記47...' vs '熟女記48限...' → False
+2025-11-14 09:44:32 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:32 - API 呼叫 #10: 比較 '熟女記47...' vs '熟女記49限...' → False
+2025-11-14 09:44:33 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:33 - API 呼叫 #11: 比較 '熟女記47...' vs '熟女記50限...' → False
+2025-11-14 09:44:33 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:33 - API 呼叫 #12: 比較 '熟女記47...' vs '熟女記51限...' → False
+2025-11-14 09:44:34 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:34 - API 呼叫 #13: 比較 '熟女記47...' vs '熟女記52限...' → False
+2025-11-14 09:44:34 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:34 - API 呼叫 #14: 比較 '熟女記47...' vs '熟女記53限電子書...' → False
+2025-11-14 09:44:35 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:35 - API 呼叫 #15: 比較 '熟女記47...' vs '熟女記54限電子書...' → False
+2025-11-14 09:44:46 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+2025-11-14 09:44:46 - Retrying request to /chat/completions in 0.396498 seconds
+2025-11-14 09:44:46 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:46 - API 呼叫 #16: 比較 '熟女記47...' vs '蓮華頌一女Alpha的鳳紋祕法...' → False
+2025-11-14 09:44:46 -   標準化後: '熟女記47...' vs '蓮華頌1女Alpha的鳳紋祕法...'
+2025-11-14 09:44:47 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:47 - API 呼叫 #17: 比較 '熟女記47...' vs '蓮華頌一電子書...' → False
+2025-11-14 09:44:47 -   標準化後: '熟女記47...' vs '蓮華頌1電子書...'
+2025-11-14 09:44:47 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:47 - API 呼叫 #18: 比較 '熟女記47...' vs '蓮華頌二女Alpha的鳳紋祕法...' → False
+2025-11-14 09:44:47 -   標準化後: '熟女記47...' vs '蓮華頌2女Alpha的鳳紋祕法...'
+2025-11-14 09:44:48 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:48 - API 呼叫 #19: 比較 '熟女記47...' vs '蓮華頌二電子書...' → False
+2025-11-14 09:44:48 -   標準化後: '熟女記47...' vs '蓮華頌2電子書...'
+2025-11-14 09:44:48 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:48 - API 呼叫 #20: 比較 '熟女記47...' vs '蓮華頌三女Alpha的鳳紋祕法...' → False
+2025-11-14 09:44:48 -   標準化後: '熟女記47...' vs '蓮華頌3女Alpha的鳳紋祕法...'
+2025-11-14 09:44:49 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:49 - API 呼叫 #21: 比較 '熟女記47...' vs '蓮華頌三電子書...' → False
+2025-11-14 09:44:49 -   標準化後: '熟女記47...' vs '蓮華頌3電子書...'
+2025-11-14 09:44:50 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:50 - API 呼叫 #22: 比較 '熟女記47...' vs '蓮華頌四完女Alpha的鳳紋祕法...' → False
+2025-11-14 09:44:50 -   標準化後: '熟女記47...' vs '蓮華頌4完女Alpha的鳳紋祕法...'
+2025-11-14 09:44:50 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:50 - API 呼叫 #23: 比較 '熟女記47...' vs '蓮華頌四完電子書...' → False
+2025-11-14 09:44:50 -   標準化後: '熟女記47...' vs '蓮華頌4完電子書...'
+2025-11-14 09:44:51 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:51 - API 呼叫 #24: 比較 '熟女記47...' vs '蔡志忠漫畫大珠慧海頓悟入道要門論電子書...' → False
+2025-11-14 09:44:51 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:51 - API 呼叫 #25: 比較 '熟女記47...' vs '蔡志忠漫畫大珠慧海頓悟入道要門論電子書...' → False
+2025-11-14 09:44:52 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:52 - API 呼叫 #26: 比較 '熟女記47...' vs '蔡志忠漫畫大珠慧海諸方門人參問語錄電子書...' → False
+2025-11-14 09:44:52 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:52 - API 呼叫 #27: 比較 '熟女記47...' vs '蔡志忠漫畫大珠慧海諸方門人參問語錄電子書...' → False
+2025-11-14 09:44:53 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:53 - API 呼叫 #28: 比較 '熟女記47...' vs '複利思維電子書...' → False
+2025-11-14 09:44:53 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:53 - API 呼叫 #29: 比較 '熟女記47...' vs '學習四象限打造屬於你的高效學習藍圖...' → False
+2025-11-14 09:44:53 -   標準化後: '熟女記47...' vs '學習4象限打造屬於你的高效學習藍圖...'
+2025-11-14 09:44:54 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:54 - API 呼叫 #30: 比較 '熟女記47...' vs '學習四象限打造屬於你的高效學習藍圖打造屬於你的高效學習藍圖...' → False
+2025-11-14 09:44:54 -   標準化後: '熟女記47...' vs '學習4象限打造屬於你的高效學習藍圖打造屬於你的高效學習藍圖...'
+2025-11-14 09:44:54 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:54 - API 呼叫 #31: 比較 '熟女記47...' vs '樹冠羞避...' → False
+2025-11-14 09:44:55 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:55 - API 呼叫 #32: 比較 '熟女記47...' vs '樹冠羞避電子書...' → False
+2025-11-14 09:44:55 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:55 - API 呼叫 #33: 比較 '熟女記47...' vs '獨角獸炒作與泡沫新科技熱門話題是真商機還是假訊號美日新加坡資歷超過45年卡內基美隆博士教你如何識別避...' → False
+2025-11-14 09:44:56 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:56 - API 呼叫 #34: 比較 '熟女記47...' vs '獨角獸炒作與泡沫電子書...' → False
+2025-11-14 09:44:56 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:56 - API 呼叫 #35: 比較 '熟女記47...' vs '親愛的末期癌症蔡康永真情推薦低谷總裁的二十堂生命體悟課...' → False
+2025-11-14 09:44:56 -   標準化後: '熟女記47...' vs '親愛的末期癌症蔡康永真情推薦低谷總裁的20堂生命體悟課...'
+2025-11-14 09:44:57 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:57 - API 呼叫 #36: 比較 '熟女記47...' vs '親愛的末期癌症電子書...' → False
+2025-11-14 09:44:57 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:57 - API 呼叫 #37: 比較 '熟女記47...' vs '貓狗營養學掌握毛小孩飲食營養需求正確選擇食物改善疾病症狀...' → False
+2025-11-14 09:44:58 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:58 - API 呼叫 #38: 比較 '熟女記47...' vs '貓狗營養學二版掌握毛小孩飲食營養需求正確選擇食物改善疾病症狀電子書...' → False
+2025-11-14 09:44:58 -   標準化後: '熟女記47...' vs '貓狗營養學2版掌握毛小孩飲食營養需求正確選擇食物改善疾病症狀電子書...'
+2025-11-14 09:44:58 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:58 - API 呼叫 #39: 比較 '熟女記47...' vs '鴨川食堂13珍藏套書王蘊潔全新譯本x川貝母視覺新詮釋電子書...' → False
+2025-11-14 09:44:59 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:59 - API 呼叫 #40: 比較 '熟女記47...' vs '鴨川食堂13珍藏套書王蘊潔全新譯本試讀本...' → False
+2025-11-14 09:44:59 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:44:59 - API 呼叫 #41: 比較 '熟女記47...' vs '懂得駕馭ai的追問思維日本思考訓練權威教你37道練習洞察問題背後的為什麼讓你贏得好結果...' → False
+2025-11-14 09:45:00 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:00 - API 呼叫 #42: 比較 '熟女記47...' vs '懂得駕馭AI的追問思維日本思考訓練權威教你37道練習洞察問題背後的為什麼讓你贏得好結果電子書...' → False
+2025-11-14 09:45:00 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:00 - API 呼叫 #43: 比較 '熟女記47...' vs '賺錢生意八成業績來自回頭客我的情感連結留客術不花錢培養回流客健身房美容美髮餐飲顧問諮詢各行業都適用...' → False
+2025-11-14 09:45:00 -   標準化後: '熟女記47...' vs '賺錢生意8成業績來自回頭客我的情感連結留客術不花錢培養回流客健身房美容美髮餐飲顧問諮詢各行業都適用...'
+2025-11-14 09:45:00 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:00 - API 呼叫 #44: 比較 '熟女記47...' vs '賺錢生意八成業績來自回頭客電子書...' → False
+2025-11-14 09:45:00 -   標準化後: '熟女記47...' vs '賺錢生意8成業績來自回頭客電子書...'
+2025-11-14 09:45:01 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:01 - API 呼叫 #45: 比較 '熟女記47...' vs '點句成金電子書...' → False
+2025-11-14 09:45:01 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:01 - API 呼叫 #46: 比較 '熟女記47...' vs '點句成金電子書...' → False
+2025-11-14 09:45:02 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:02 - API 呼叫 #47: 比較 '熟女記47...' vs '點燃你的每一天...' → False
+2025-11-14 09:45:02 -   標準化後: '熟女記47...' vs '點燃你的每1天...'
+2025-11-14 09:45:02 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:02 - API 呼叫 #48: 比較 '熟女記47...' vs '點燃你的每一天微選擇重塑你的人生...' → False
+2025-11-14 09:45:02 -   標準化後: '熟女記47...' vs '點燃你的每1天微選擇重塑你的人生...'
+2025-11-14 09:45:03 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:03 - API 呼叫 #49: 比較 '熟女記47...' vs '禮貌的力量簡單作為發揮最大影響力驅動高效領導打造理想生活的隱形策略電子書...' → False
+2025-11-14 09:45:03 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:03 - API 呼叫 #50: 比較 '熟女記47...' vs '禮貌的力量二版簡單作為發揮最大影響力驅動高效領導打造理想生活的隱形策略...' → False
+2025-11-14 09:45:03 -   標準化後: '熟女記47...' vs '禮貌的力量2版簡單作為發揮最大影響力驅動高效領導打造理想生活的隱形策略...'
+2025-11-14 09:45:04 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:04 - API 呼叫 #51: 比較 '熟女記47...' vs '翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗...' → False
+2025-11-14 09:45:05 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:05 - API 呼叫 #52: 比較 '熟女記47...' vs '翻轉人生的關鍵時刻讓平凡變不凡打造永生難忘的巔峰體驗電子書...' → False
+2025-11-14 09:45:05 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:05 - API 呼叫 #53: 比較 '熟女記47...' vs '贅婿的榮耀38...' → False
+2025-11-14 09:45:06 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:06 - API 呼叫 #54: 比較 '熟女記47...' vs '贅婿的榮耀39...' → False
+2025-11-14 09:45:06 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:06 - API 呼叫 #55: 比較 '熟女記47...' vs '贅婿的榮耀40...' → False
+2025-11-14 09:45:06 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:06 - API 呼叫 #56: 比較 '熟女記47...' vs '贅婿的榮耀41...' → False
+2025-11-14 09:45:07 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:07 - API 呼叫 #57: 比較 '熟女記47...' vs '贅婿的榮耀38限...' → False
+2025-11-14 09:45:08 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:08 - API 呼叫 #58: 比較 '熟女記47...' vs '贅婿的榮耀39限...' → False
+2025-11-14 09:45:08 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:08 - API 呼叫 #59: 比較 '熟女記47...' vs '贅婿的榮耀40限...' → False
+2025-11-14 09:45:09 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:09 - API 呼叫 #60: 比較 '熟女記47...' vs '贅婿的榮耀41限...' → False
+2025-11-14 09:45:09 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:09 - API 呼叫 #61: 比較 '熟女記47...' vs '藝術的祕密名作中隱藏的訊息意義與象徵符號...' → False
+2025-11-14 09:45:10 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:10 - API 呼叫 #62: 比較 '熟女記47...' vs '藝術的祕密名作中隱藏的訊息意義與象徵符號電子書...' → False
+2025-11-14 09:45:10 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:10 - API 呼叫 #63: 比較 '熟女記47...' vs '關西親子遊大阪京都神戶奈良大手牽小手零經驗也能輕鬆上手自助行暢銷修訂版電子書...' → False
+2025-11-14 09:45:10 -   標準化後: '熟女記47...' vs '關西親子遊大阪京都神戶奈良大手牽小手0經驗也能輕鬆上手自助行暢銷修訂版電子書...'
+2025-11-14 09:45:10 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:10 - API 呼叫 #64: 比較 '熟女記47...' vs '關西親子遊暢銷修訂版大阪京都神戶奈良大手牽小手零經驗也能輕鬆上手自助行...' → False
+2025-11-14 09:45:10 -   標準化後: '熟女記47...' vs '關西親子遊暢銷修訂版大阪京都神戶奈良大手牽小手0經驗也能輕鬆上手自助行...'
+2025-11-14 09:45:11 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:11 - API 呼叫 #65: 比較 '熟女記47...' vs '覺醒之道寫給現代人的漸悟指南...' → False
+2025-11-14 09:45:11 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:11 - API 呼叫 #66: 比較 '熟女記47...' vs '覺醒之道寫給現代人的漸悟指南電子書...' → False
+2025-11-14 09:45:12 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:12 - API 呼叫 #67: 比較 '熟女記47...' vs '覺醒心藥...' → False
+2025-11-14 09:45:12 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:12 - API 呼叫 #68: 比較 '熟女記47...' vs '覺醒心藥電子書...' → False
+2025-11-14 09:45:13 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:13 - API 呼叫 #69: 比較 '熟女記47...' vs '警門贅婿1...' → False
+2025-11-14 09:45:13 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:13 - API 呼叫 #70: 比較 '熟女記47...' vs '警門贅婿2...' → False
+2025-11-14 09:45:15 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:15 - API 呼叫 #71: 比較 '熟女記47...' vs '警門贅婿3...' → False
+2025-11-14 09:45:15 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:15 - API 呼叫 #72: 比較 '熟女記47...' vs '警門贅婿4...' → False
+2025-11-14 09:45:16 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:16 - API 呼叫 #73: 比較 '熟女記47...' vs '警門贅婿5...' → False
+2025-11-14 09:45:16 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:16 - API 呼叫 #74: 比較 '熟女記47...' vs '警門贅婿6...' → False
+2025-11-14 09:45:17 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:17 - API 呼叫 #75: 比較 '熟女記47...' vs '警門贅婿1限...' → False
+2025-11-14 09:45:17 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:17 - API 呼叫 #76: 比較 '熟女記47...' vs '警門贅婿2限...' → False
+2025-11-14 09:45:18 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:18 - API 呼叫 #77: 比較 '熟女記47...' vs '警門贅婿3限電子書...' → False
+2025-11-14 09:45:18 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:18 - API 呼叫 #78: 比較 '熟女記47...' vs '警門贅婿4限電子書...' → False
+2025-11-14 09:45:19 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:19 - API 呼叫 #79: 比較 '熟女記47...' vs '警門贅婿5限電子書...' → False
+2025-11-14 09:45:19 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:19 - API 呼叫 #80: 比較 '熟女記47...' vs '警門贅婿6限電子書...' → False
+2025-11-14 09:45:20 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:20 - API 呼叫 #81: 比較 '熟女記47...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版...' → False
+2025-11-14 09:45:20 -   標準化後: '熟女記47...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器3版...'
+2025-11-14 09:45:20 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:20 - API 呼叫 #82: 比較 '熟女記47...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器三版電子書...' → False
+2025-11-14 09:45:20 -   標準化後: '熟女記47...' vs '蘭徹斯特策略小克大弱勝強打敗大你10倍對手的終極武器3版電子書...'
+2025-11-14 09:45:20 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:20 - API 呼叫 #83: 比較 '熟女記47...' vs '魔女犬碰碰1命中注定的搭檔...' → False
+2025-11-14 09:45:21 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:21 - API 呼叫 #84: 比較 '熟女記47...' vs '魔女犬碰碰1命中注定的搭檔電子書...' → False
+2025-11-14 09:45:21 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:21 - API 呼叫 #85: 比較 '熟女記47...' vs '魔女犬碰碰2驚喜橡實的魔法祕密...' → False
+2025-11-14 09:45:22 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:22 - API 呼叫 #86: 比較 '熟女記47...' vs '魔女犬碰碰2驚喜橡實的魔法祕密電子書...' → False
+2025-11-14 09:45:22 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:22 - API 呼叫 #87: 比較 '熟女記47...' vs '魔豆惊悚系列05母侵简体字...' → False
+2025-11-14 09:45:23 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:23 - API 呼叫 #88: 比較 '熟女記47...' vs '魔豆惊悚系列06零居简体字...' → False
+2025-11-14 09:45:23 -   標準化後: '熟女記47...' vs '魔豆惊悚系列060居简体字...'
+2025-11-14 09:45:23 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:23 - API 呼叫 #89: 比較 '熟女記47...' vs '魔豆惊悚系列07消失的糖果简体字...' → False
+2025-11-14 09:45:24 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:24 - API 呼叫 #90: 比較 '熟女記47...' vs '魔豆惊悚系列08你是谁简体字...' → False
+2025-11-14 09:45:24 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:24 - API 呼叫 #91: 比較 '熟女記47...' vs '魔豆惊悚系列09饿简体字...' → False
+2025-11-14 09:45:25 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:25 - API 呼叫 #92: 比較 '熟女記47...' vs '魔豆惊悚系列10蓝鲸简体字...' → False
+2025-11-14 09:45:25 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:25 - API 呼叫 #93: 比較 '熟女記47...' vs '魔豆驚悚系列05母侵簡體字電子書...' → False
+2025-11-14 09:45:26 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:26 - API 呼叫 #94: 比較 '熟女記47...' vs '魔豆驚悚系列06零居簡體字電子書...' → False
+2025-11-14 09:45:26 -   標準化後: '熟女記47...' vs '魔豆驚悚系列060居簡體字電子書...'
+2025-11-14 09:45:27 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:27 - API 呼叫 #95: 比較 '熟女記47...' vs '魔豆驚悚系列07消失的糖果簡體字電子書...' → False
+2025-11-14 09:45:27 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:27 - API 呼叫 #96: 比較 '熟女記47...' vs '魔豆驚悚系列08你是誰簡體字電子書...' → False
+2025-11-14 09:45:28 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:28 - API 呼叫 #97: 比較 '熟女記47...' vs '魔豆驚悚系列09餓簡體字電子書...' → False
+2025-11-14 09:45:28 - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-14 09:45:28 - API 呼叫 #98: 比較 '熟女記47...' vs '魔豆驚悚系列10藍鯨簡體字電子書...' → False
