@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Merger</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 80vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* Loading overlay */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .merged-row {
+            background-color: #eff6ff;
+        }
+        
+        .merged-row:hover {
+            background-color: #dbeafe;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading">
+    <div class="spinner"></div>
+</div>
+
+<div class="container">
+    <header>
+        <h1>CSV Data Merger</h1>
+        <div class="actions">
+            <span id="selected-count" style="align-self: center; color: var(--text-secondary); margin-right: 10px;">0 selected</span>
+            <button class="btn-primary" onclick="mergeSelected()">Merge Selected</button>
+            <button class="btn-danger" onclick="unmergeSelected()">Unmerge Selected</button>
+            <button class="btn-secondary" onclick="fetchData()">Refresh</button>
+        </div>
+    </header>
+
+    <div class="card">
+        <div class="table-container">
+            <table id="data-table">
+                <thead>
+                    <tr id="table-header">
+                        <!-- Headers will be populated dynamically -->
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentData = [];
+    let selectedIds = new Set();
+
+    async function fetchData() {
+        showLoading(true);
+        try {
+            const response = await fetch('/api/data');
+            currentData = await response.json();
+            renderTable();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            alert('Failed to load data');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function renderTable() {
+        const tableHeader = document.getElementById('table-header');
+        const tableBody = document.getElementById('table-body');
+        
+        tableHeader.innerHTML = '';
+        tableBody.innerHTML = '';
+        selectedIds.clear();
+        updateSelectedCount();
+
+        if (currentData.length === 0) return;
+
+        // Headers
+        const headers = Object.keys(currentData[0]);
+        
+        // Checkbox header
+        const thCb = document.createElement('th');
+        thCb.className = 'checkbox-cell';
+        thCb.innerHTML = '<input type="checkbox" onclick="toggleAll(this)">';
+        tableHeader.appendChild(thCb);
+
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tableHeader.appendChild(th);
+        });
+
+        // Rows
+        // Limit rendering for performance if needed, but 7000 might be okay-ish on modern browsers. 
+        // Let's render all for now, if slow we can paginate.
+        // Optimization: use document fragment
+        const fragment = document.createDocumentFragment();
+        
+        currentData.forEach(row => {
+            const tr = document.createElement('tr');
+            const id = row['TAICCA_ID'];
+            
+            if (id && id.includes('/')) {
+                tr.classList.add('merged-row');
+            }
+
+            // Checkbox
+            const tdCb = document.createElement('td');
+            tdCb.className = 'checkbox-cell';
+            tdCb.innerHTML = `<input type="checkbox" value="${id}" onchange="toggleSelection('${id}', this)">`;
+            tr.appendChild(tdCb);
+
+            headers.forEach(header => {
+                const td = document.createElement('td');
+                td.textContent = row[header];
+                td.title = row[header]; // Tooltip for full content
+                tr.appendChild(td);
+            });
+            
+            fragment.appendChild(tr);
+        });
+        
+        tableBody.appendChild(fragment);
+    }
+
+    function toggleSelection(id, checkbox) {
+        if (checkbox.checked) {
+            selectedIds.add(id);
+        } else {
+            selectedIds.delete(id);
+        }
+        updateSelectedCount();
+    }
+    
+    function toggleAll(checkbox) {
+        const checkboxes = document.querySelectorAll('#table-body input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            cb.checked = checkbox.checked;
+            const id = cb.value;
+            if (checkbox.checked) {
+                selectedIds.add(id);
+            } else {
+                selectedIds.delete(id);
+            }
+        });
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        document.getElementById('selected-count').textContent = `${selectedIds.size} selected`;
+    }
+
+    async function mergeSelected() {
+        if (selectedIds.size < 2) {
+            alert('Please select at least 2 rows to merge.');
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to merge ${selectedIds.size} items?`)) return;
+
+        showLoading(true);
+        try {
+            const response = await fetch('/api/merge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: Array.from(selectedIds) })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                await fetchData();
+            } else {
+                alert('Merge failed: ' + (result.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error merging:', error);
+            alert('Error merging data');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function unmergeSelected() {
+        if (selectedIds.size === 0) {
+            alert('Please select items to unmerge.');
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to unmerge ${selectedIds.size} items?`)) return;
+
+        showLoading(true);
+        try {
+            // Process sequentially or parallel? Parallel might have race conditions on file write.
+            // Let's do it one by one for safety, or change backend to accept list.
+            // Backend currently accepts single ID for unmerge.
+            // I'll loop here.
+            
+            const ids = Array.from(selectedIds);
+            let successCount = 0;
+            
+            for (const id of ids) {
+                 const response = await fetch('/api/unmerge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const result = await response.json();
+                if (result.success) successCount++;
+            }
+            
+            await fetchData();
+            alert(`Unmerged ${successCount} items.`);
+            
+        } catch (error) {
+            console.error('Error unmerging:', error);
+            alert('Error unmerging data');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function showLoading(show) {
+        document.getElementById('loading').style.display = show ? 'flex' : 'none';
+    }
+
+    // Initial load
+    fetchData();
+</script>
+
+</body>
+</html>
