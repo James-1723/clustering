@@ -112,6 +112,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
+        /* title 欄位允許換行並完整顯示 */
+        td.title-cell {
+            white-space: normal;
+            word-wrap: break-word;
+            max-width: 400px;
+            min-width: 200px;
+        }
 
         th {
             background-color: #f9fafb;
@@ -270,6 +278,12 @@
                 const td = document.createElement('td');
                 td.textContent = row[header];
                 td.title = row[header]; // Tooltip for full content
+                
+                // title 欄位使用特殊樣式，允許換行
+                if (header === 'title') {
+                    td.className = 'title-cell';
+                }
+                
                 tr.appendChild(td);
             });
             
