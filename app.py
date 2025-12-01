@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.json.sort_keys = False
 
 DATA_DIR = 'input_data'
-FILE_7000 = os.path.join(DATA_DIR, 'raw_data.csv')
-FILE_INPUT = os.path.join(DATA_DIR, 'paper_source_1124.csv')
+FILE_7000 = os.path.join(DATA_DIR, 'system_test.csv')
+FILE_INPUT = os.path.join(DATA_DIR, 'paper_source_1201.csv')
 
 merge_count = 0
 
@@ -179,10 +179,11 @@ def get_sorted_columns(df_columns):
     """Return columns sorted according to the user-specified order"""
     target_order = [
         'index',  # index 放在最左邊
-        'TAICCA_ID', 
+        'TAICCA_ID',
+        'title',  # title 緊接在 TAICCA_ID 旁邊
         'bookscom_production_id', 'eslite_production_id', 'kingstone_production_id', 'sanmin_production_id',
         'isbn', 'bookscom_isbn', 'eslite_isbn', 'kingstone_isbn', 'sanmin_isbn',
-        'title', 'bookscom_title', 'eslite_title', 'kingstone_title', 'sanmin_title',
+        'bookscom_title', 'eslite_title', 'kingstone_title', 'sanmin_title',
         'processed_title', 'bookscom_processed_title', 'eslite_processed_title', 'kingstone_processed_title', 'sanmin_processed_title',
         'original_title', 'bookscom_original_title', 'eslite_original_title', 'kingstone_original_title', 'sanmin_original_title',
         'author', 'bookscom_author', 'eslite_author', 'kingstone_author', 'sanmin_author',
@@ -262,10 +263,13 @@ def merge_data():
     # Convert merged_row back to DataFrame
     merged_df = pd.DataFrame([merged_row])
     
-    # Ensure columns match
+    # Ensure columns match and maintain same order as df
     for col in df.columns:
         if col not in merged_df.columns:
             merged_df[col] = ''
+    
+    # 確保 merged_df 的欄位順序與 df 完全一致
+    merged_df = merged_df[df.columns]
     
     # 將合併後的資料插入到原位置
     # 分成前後兩部分，然後插入合併的資料
@@ -330,6 +334,14 @@ def unmerge_data():
     
     # 移除被合併的資料
     df = df[df['TAICCA_ID'] != target_id]
+    
+    # 確保 original_rows 有所有需要的欄位，並且順序與 df 一致
+    for col in df.columns:
+        if col not in original_rows.columns:
+            original_rows[col] = ''
+    
+    # 確保 original_rows 的欄位順序與 df 完全一致
+    original_rows = original_rows[df.columns]
     
     # 將原始資料插入到原位置
     df_before = df.iloc[:insert_position]
