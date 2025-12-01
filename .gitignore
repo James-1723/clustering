@@ -3,3 +3,4 @@ clustered_data/
 clustered data/full_data_with_clusters.csv
 input_data/paper_embedding.csv
 input_data/test_merged_output.csv
+.DS_Store

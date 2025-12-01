@@ -2,15 +2,52 @@ import pandas as pd
 from flask import Flask, render_template, request, jsonify
 import os
 from datetime import datetime
+from functools import lru_cache
 
 app = Flask(__name__)
 app.json.sort_keys = False
 
 DATA_DIR = 'input_data'
-FILE_7000 = os.path.join(DATA_DIR, 'system_test.csv')
+FILE_7000 = os.path.join(DATA_DIR, 'raw_data.csv')
 FILE_INPUT = os.path.join(DATA_DIR, 'paper_source_1124.csv')
 
 merge_count = 0
+
+# 快取資料和檔案修改時間
+_cache = {
+    'data': None,
+    'input_data': None,
+    'mtime': None,
+    'input_mtime': None
+}
+
+def get_cached_data(filepath, cache_key, mtime_key):
+    """從快取讀取資料，如果檔案有修改則重新讀取"""
+    try:
+        current_mtime = os.path.getmtime(filepath)
+        if _cache[mtime_key] is None or _cache[mtime_key] != current_mtime or _cache[cache_key] is None:
+            _cache[cache_key] = pd.read_csv(filepath)
+            _cache[mtime_key] = current_mtime
+        return _cache[cache_key].copy()
+    except Exception as e:
+        print(f"Error loading data from {filepath}: {e}")
+        return pd.read_csv(filepath)
+
+def invalidate_cache():
+    """清除快取"""
+    _cache['data'] = None
+    _cache['mtime'] = None
+
+@lru_cache(maxsize=1024)
+def parse_date(date_str):
+    """快取日期解析結果"""
+    date_formats = ['%Y/%m/%d', '%Y-%m-%d', '%m/%d/%y', '%m/%d/%Y', '%d/%m/%y', '%d/%m/%Y']
+    for fmt in date_formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except:
+            continue
+    return None
 
 def merge_two_books(book1, book2):
     """合併兩本書的資料（內部使用，不增加計數器）"""
@@ -85,25 +122,15 @@ def merge_two_books(book1, book2):
     
     # min_publish_date 和 max_publish_date：只從四間書商的日期中比較
     dates = []
+    date_formats = ['%Y/%m/%d', '%Y-%m-%d', '%m/%d/%y', '%m/%d/%Y', '%d/%m/%y', '%d/%m/%Y']
+    
     for col in ['bookscom_publish_date', 'eslite_publish_date', 'kingstone_publish_date', 'sanmin_publish_date']:
         for book in [book1, book2]:
             if pd.notna(book.get(col)) and str(book.get(col)).strip():
-                try:
-                    date_str = str(book[col]).strip()
-                    date_obj = None
-                    
-                    # 嘗試多種日期格式
-                    for fmt in ['%Y/%m/%d', '%Y-%m-%d', '%m/%d/%y', '%m/%d/%Y', '%d/%m/%y', '%d/%m/%Y']:
-                        try:
-                            date_obj = datetime.strptime(date_str, fmt)
-                            break
-                        except:
-                            continue
-                    
-                    if date_obj:
-                        dates.append(date_obj)
-                except:
-                    pass
+                date_str = str(book[col]).strip()
+                date_obj = parse_date(date_str)
+                if date_obj:
+                    dates.append(date_obj)
     
     if dates:
         merged['min_publish_date'] = min(dates).strftime('%Y-%m-%d')
@@ -180,7 +207,7 @@ def index():
 
 @app.route('/api/data')
 def get_data():
-    df = pd.read_csv(FILE_7000)
+    df = get_cached_data(FILE_7000, 'data', 'mtime')
     # Replace NaN with empty string for JSON serialization
     df = df.fillna('')
     
@@ -196,7 +223,7 @@ def merge_data():
     if not ids_to_merge or len(ids_to_merge) < 2:
         return jsonify({'error': 'Need at least 2 items to merge'}), 400
     
-    df = pd.read_csv(FILE_7000)
+    df = get_cached_data(FILE_7000, 'data', 'mtime')
     
     # Filter rows to merge
     rows_to_merge = df[df['TAICCA_ID'].isin(ids_to_merge)].to_dict('records')
@@ -225,6 +252,9 @@ def merge_data():
     
     df.to_csv(FILE_7000, index=False)
     
+    # 清除快取以確保下次讀取最新資料
+    invalidate_cache()
+    
     return jsonify({'success': True})
 
 @app.route('/api/unmerge', methods=['POST'])
@@ -244,8 +274,8 @@ def unmerge_data():
     
     original_ids = [x.strip() for x in target_id.split('/')]
     
-    # Read input.csv to get original data
-    input_df = pd.read_csv(FILE_INPUT)
+    # Read input.csv to get original data (使用快取)
+    input_df = get_cached_data(FILE_INPUT, 'input_data', 'input_mtime')
     
     # Search for the original IDs
     mask = input_df['TAICCA_ID'].isin(original_ids)
@@ -254,8 +284,8 @@ def unmerge_data():
     if original_rows.empty:
         return jsonify({'error': 'Original data not found'}), 404
           
-    # Update system_test.csv
-    df = pd.read_csv(FILE_7000)
+    # Update system_test.csv (使用快取)
+    df = get_cached_data(FILE_7000, 'data', 'mtime')
     df = df[df['TAICCA_ID'] != target_id]
     df = pd.concat([df, original_rows], ignore_index=True)
     
@@ -264,6 +294,9 @@ def unmerge_data():
     df = df[cols]
     
     df.to_csv(FILE_7000, index=False)
+    
+    # 清除快取以確保下次讀取最新資料
+    invalidate_cache()
     
     return jsonify({'success': True})
 
