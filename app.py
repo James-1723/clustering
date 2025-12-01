@@ -178,6 +178,7 @@ def merge_multiple_books(books):
 def get_sorted_columns(df_columns):
     """Return columns sorted according to the user-specified order"""
     target_order = [
+        'index',  # index 放在最左邊
         'TAICCA_ID', 
         'bookscom_production_id', 'eslite_production_id', 'kingstone_production_id', 'sanmin_production_id',
         'isbn', 'bookscom_isbn', 'eslite_isbn', 'kingstone_isbn', 'sanmin_isbn',
@@ -201,6 +202,17 @@ def get_sorted_columns(df_columns):
     
     return sorted_cols + extra_cols
 
+def ensure_index_column(df):
+    """確保 DataFrame 有 index 欄位，如果沒有則建立"""
+    if 'index' not in df.columns:
+        df.insert(0, 'index', range(1, len(df) + 1))
+    return df
+
+def reindex_dataframe(df):
+    """重新編號 index 欄位"""
+    df['index'] = range(1, len(df) + 1)
+    return df
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -208,6 +220,10 @@ def index():
 @app.route('/api/data')
 def get_data():
     df = get_cached_data(FILE_7000, 'data', 'mtime')
+    
+    # 確保有 index 欄位
+    df = ensure_index_column(df)
+    
     # Replace NaN with empty string for JSON serialization
     df = df.fillna('')
     
@@ -225,26 +241,40 @@ def merge_data():
     
     df = get_cached_data(FILE_7000, 'data', 'mtime')
     
+    # 確保有 index 欄位
+    df = ensure_index_column(df)
+    
     # Filter rows to merge
     rows_to_merge = df[df['TAICCA_ID'].isin(ids_to_merge)].to_dict('records')
     
     if len(rows_to_merge) < 2:
          return jsonify({'error': 'Could not find all items to merge'}), 400
 
+    # 找到要合併的資料中，最小的 index 位置
+    merge_indices = df[df['TAICCA_ID'].isin(ids_to_merge)].index
+    insert_position = merge_indices.min()
+    
     merged_row = merge_multiple_books(rows_to_merge)
     
-    # Remove original rows and append merged row
+    # Remove original rows
     df = df[~df['TAICCA_ID'].isin(ids_to_merge)]
     
-    # Convert merged_row back to DataFrame to append
+    # Convert merged_row back to DataFrame
     merged_df = pd.DataFrame([merged_row])
     
     # Ensure columns match
     for col in df.columns:
         if col not in merged_df.columns:
             merged_df[col] = ''
-            
-    df = pd.concat([df, merged_df], ignore_index=True)
+    
+    # 將合併後的資料插入到原位置
+    # 分成前後兩部分，然後插入合併的資料
+    df_before = df.iloc[:insert_position]
+    df_after = df.iloc[insert_position:]
+    df = pd.concat([df_before, merged_df, df_after], ignore_index=True)
+    
+    # 重新編號 index
+    df = reindex_dataframe(df)
     
     # Sort columns before saving
     cols = get_sorted_columns(df.columns)
@@ -286,8 +316,28 @@ def unmerge_data():
           
     # Update system_test.csv (使用快取)
     df = get_cached_data(FILE_7000, 'data', 'mtime')
+    
+    # 確保有 index 欄位
+    df = ensure_index_column(df)
+    
+    # 找到被合併資料的位置
+    merge_position = df[df['TAICCA_ID'] == target_id].index
+    
+    if len(merge_position) == 0:
+        return jsonify({'error': 'Merged data not found'}), 404
+    
+    insert_position = merge_position[0]
+    
+    # 移除被合併的資料
     df = df[df['TAICCA_ID'] != target_id]
-    df = pd.concat([df, original_rows], ignore_index=True)
+    
+    # 將原始資料插入到原位置
+    df_before = df.iloc[:insert_position]
+    df_after = df.iloc[insert_position:]
+    df = pd.concat([df_before, original_rows, df_after], ignore_index=True)
+    
+    # 重新編號 index
+    df = reindex_dataframe(df)
     
     # Sort columns before saving
     cols = get_sorted_columns(df.columns)
