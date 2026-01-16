@@ -245,20 +245,34 @@ def merge_data():
     # 確保有 index 欄位
     df = ensure_index_column(df)
     
+    # Determine ID column based on input format
+    # If all IDs are digits/integers, assume 'index'
+    is_numeric_ids = True
+    try:
+        converted_ids = [int(x) for x in ids_to_merge]
+        ids_to_merge = converted_ids
+    except:
+        is_numeric_ids = False
+    
+    if is_numeric_ids:
+        id_col = 'index'
+    else:
+        id_col = 'TAICCA_ID'
+
     # Filter rows to merge
-    rows_to_merge = df[df['TAICCA_ID'].isin(ids_to_merge)].to_dict('records')
+    rows_to_merge = df[df[id_col].isin(ids_to_merge)].to_dict('records')
     
     if len(rows_to_merge) < 2:
          return jsonify({'error': 'Could not find all items to merge'}), 400
 
     # 找到要合併的資料中，最小的 index 位置
-    merge_indices = df[df['TAICCA_ID'].isin(ids_to_merge)].index
+    merge_indices = df[df[id_col].isin(ids_to_merge)].index
     insert_position = merge_indices.min()
     
     merged_row = merge_multiple_books(rows_to_merge)
     
     # Remove original rows
-    df = df[~df['TAICCA_ID'].isin(ids_to_merge)]
+    df = df[~df[id_col].isin(ids_to_merge)]
     
     # Convert merged_row back to DataFrame
     merged_df = pd.DataFrame([merged_row])
@@ -293,39 +307,78 @@ def merge_data():
 
 @app.route('/api/unmerge', methods=['POST'])
 def unmerge_data():
-    print(f"[DEBUG] Received request.json: {request.json}")
+    # print(f"[DEBUG] Received request.json: {request.json}")
     target_id = request.json.get('id')
-    print(f"[DEBUG] target_id: '{target_id}'")
+    # print(f"[DEBUG] target_id: '{target_id}'")
     
     if not target_id:
-        print(f"[DEBUG] Error: No ID provided")
         return jsonify({'error': 'No ID provided'}), 400
         
-    # Check if it is a merged ID (contains /)
-    if '/' not in target_id:
-        print(f"[DEBUG] Error: Not a merged ID (no '/' found)")
-        return jsonify({'error': 'Not a merged ID'}), 400
-    
-    original_ids = [x.strip() for x in target_id.split('/')]
-    
     # Read input.csv to get original data (使用快取)
     input_df = get_cached_data(FILE_INPUT, 'input_data', 'input_mtime')
     
-    # Search for the original IDs
-    mask = input_df['TAICCA_ID'].isin(original_ids)
-    original_rows = input_df[mask]
-    
-    if original_rows.empty:
-        return jsonify({'error': 'Original data not found'}), 404
-          
     # Update system_test.csv (使用快取)
     df = get_cached_data(FILE_7000, 'data', 'mtime')
     
     # 確保有 index 欄位
     df = ensure_index_column(df)
     
-    # 找到被合併資料的位置
-    merge_position = df[df['TAICCA_ID'] == target_id].index
+    merge_position = []
+    original_rows = pd.DataFrame()
+
+    # Try to find by index first
+    try:
+        target_idx = int(target_id)
+        merge_position = df[df['index'] == target_idx].index
+        
+        if len(merge_position) > 0:
+            target_row = df.loc[merge_position[0]]
+            
+            # Check for IDs in production_ids columns
+            prod_cols = ['bookscom_production_id', 'eslite_production_id', 'kingstone_production_id', 'sanmin_production_id']
+            original_ids_map = {col: [] for col in prod_cols}
+            has_valid_id = False
+            
+            for col in prod_cols:
+                val = str(target_row.get(col, '')).strip()
+                if val and val.lower() != 'nan':
+                    p_ids = []
+                    if '/' in val:
+                        p_ids = [x.strip() for x in val.split('/')]
+                    else:
+                        p_ids = [val]
+                    
+                    # Filter empty and placeholders
+                    p_ids = [x for x in p_ids if x and x != '（空白）' and x.lower() != 'nan']
+                    
+                    if p_ids:
+                        has_valid_id = True
+                        original_ids_map[col].extend(p_ids)
+
+            if has_valid_id:
+                # Find original rows by any of the production IDs
+                mask = pd.Series([False] * len(input_df))
+                
+                for col, ids in original_ids_map.items():
+                    if ids:
+                        sub_mask = input_df[col].astype(str).isin(ids)
+                        mask = mask | sub_mask
+                        
+                original_rows = input_df[mask]
+                
+                if original_rows.empty:
+                        return jsonify({'error': 'No original data found for the extracted IDs'}), 404
+            else:
+                return jsonify({'error': 'Selected row has no valid Production IDs to trace'}), 400
+
+        else:
+             return jsonify({'error': 'Merged data not found by index'}), 404
+
+    except ValueError:
+         return jsonify({'error': 'Invalid ID format for index'}), 400
+
+    if original_rows.empty:
+        return jsonify({'error': 'Original data not found'}), 404
     
     if len(merge_position) == 0:
         return jsonify({'error': 'Merged data not found'}), 404
@@ -333,7 +386,7 @@ def unmerge_data():
     insert_position = merge_position[0]
     
     # 移除被合併的資料
-    df = df[df['TAICCA_ID'] != target_id]
+    df = df.drop(merge_position)
     
     # 確保 original_rows 有所有需要的欄位，並且順序與 df 一致
     for col in df.columns:

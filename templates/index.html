@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -103,7 +104,8 @@
             font-size: 0.875rem;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
@@ -164,238 +166,315 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .merged-row {
             background-color: #eff6ff;
         }
-        
+
         .merged-row:hover {
             background-color: #dbeafe;
         }
     </style>
 </head>
+
 <body>
 
-<div id="loading">
-    <div class="spinner"></div>
-</div>
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
 
-<div class="container">
-    <header>
-        <h1>CSV Data Merger</h1>
-        <div class="actions">
-            <span id="selected-count" style="align-self: center; color: var(--text-secondary); margin-right: 10px;">0 selected</span>
-            <button class="btn-primary" onclick="mergeSelected()">Merge Selected</button>
-            <button class="btn-danger" onclick="unmergeSelected()">Unmerge Selected</button>
-            <button class="btn-secondary" onclick="fetchData()">Refresh</button>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>CSV Data Merger</h1>
+            <div class="actions">
+                <span id="selected-count"
+                    style="align-self: center; color: var(--text-secondary); margin-right: 10px;">0 selected</span>
+                <div class="pagination-controls"
+                    style="display: flex; gap: 5px; align-items: center; margin-right: 10px;">
+                    <button class="btn-secondary" onclick="prevPage()">Prev</button>
+                    <span id="page-info">Page 1</span>
+                    <button class="btn-secondary" onclick="nextPage()">Next</button>
+                </div>
+                <button class="btn-primary" onclick="mergeSelected()">Merge Selected</button>
+                <button class="btn-danger" onclick="unmergeSelected()">Unmerge Selected</button>
+                <button class="btn-secondary" onclick="fetchData()">Refresh</button>
+            </div>
+        </header>
 
-    <div class="card">
-        <div class="table-container">
-            <table id="data-table">
-                <thead>
-                    <tr id="table-header">
-                        <!-- Headers will be populated dynamically -->
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Rows will be populated dynamically -->
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="table-container">
+                <table id="data-table">
+                    <thead>
+                        <tr id="table-header">
+                            <!-- Headers will be populated dynamically -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Rows will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    let currentData = [];
-    let selectedIds = new Set();
+    <script>
+        let currentData = [];
+        let selectedIds = new Set();
+        let currentPage = 1;
+        const pageSize = 50;
 
-    async function fetchData() {
-        showLoading(true);
-        try {
-            const response = await fetch('/api/data');
-            currentData = await response.json();
-            renderTable();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            alert('Failed to load data');
-        } finally {
-            showLoading(false);
+        async function fetchData() {
+            showLoading(true);
+            try {
+                const response = await fetch('/api/data');
+                currentData = await response.json();
+                currentPage = 1;
+                renderTable();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Failed to load data');
+            } finally {
+                showLoading(false);
+            }
         }
-    }
 
-    function renderTable() {
-        const tableHeader = document.getElementById('table-header');
-        const tableBody = document.getElementById('table-body');
-        
-        tableHeader.innerHTML = '';
-        tableBody.innerHTML = '';
-        selectedIds.clear();
-        updateSelectedCount();
+        function renderTable() {
+            const tableHeader = document.getElementById('table-header');
+            const tableBody = document.getElementById('table-body');
+            const pageInfo = document.getElementById('page-info');
 
-        if (currentData.length === 0) return;
+            tableHeader.innerHTML = '';
+            tableBody.innerHTML = '';
+            updateSelectedCount();
 
-        // Headers
-        const headers = Object.keys(currentData[0]);
-        
-        // Checkbox header
-        const thCb = document.createElement('th');
-        thCb.className = 'checkbox-cell';
-        thCb.innerHTML = '<input type="checkbox" onclick="toggleAll(this)">';
-        tableHeader.appendChild(thCb);
-
-        headers.forEach(header => {
-            const th = document.createElement('th');
-            th.textContent = header;
-            tableHeader.appendChild(th);
-        });
-
-        // Rows
-        // Limit rendering for performance if needed, but 7000 might be okay-ish on modern browsers. 
-        // Let's render all for now, if slow we can paginate.
-        // Optimization: use document fragment
-        const fragment = document.createDocumentFragment();
-        
-        currentData.forEach(row => {
-            const tr = document.createElement('tr');
-            const id = row['TAICCA_ID'];
-            
-            if (id && id.includes('/')) {
-                tr.classList.add('merged-row');
+            if (currentData.length === 0) {
+                pageInfo.textContent = 'No Data';
+                return;
             }
 
-            // Checkbox
-            const tdCb = document.createElement('td');
-            tdCb.className = 'checkbox-cell';
-            tdCb.innerHTML = `<input type="checkbox" value="${id}" onchange="toggleSelection('${id}', this)">`;
-            tr.appendChild(tdCb);
+            // Calculate total pages
+            const totalPages = Math.ceil(currentData.length / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${currentData.length} items)`;
+
+            // Headers
+            const headers = Object.keys(currentData[0]);
+
+            // Checkbox header
+            const thCb = document.createElement('th');
+            thCb.className = 'checkbox-cell';
+            thCb.innerHTML = '<input type="checkbox" onclick="toggleAll(this)">';
+            tableHeader.appendChild(thCb);
 
             headers.forEach(header => {
-                const td = document.createElement('td');
-                td.textContent = row[header];
-                td.title = row[header]; // Tooltip for full content
-                
-                // title 欄位使用特殊樣式，允許換行
-                if (header === 'title') {
-                    td.className = 'title-cell';
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeader.appendChild(th);
+            });
+
+            // Rows - Pagination Logic
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, currentData.length);
+            const pageData = currentData.slice(startIndex, endIndex);
+
+            const fragment = document.createDocumentFragment();
+
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+
+                // Determine ID and merged status
+                // Always use index for identification to ensure consistency with backend
+                const id = row['index'];
+                let isMerged = false;
+
+                if (row['TAICCA_ID'] !== undefined && row['TAICCA_ID']) {
+                    if (String(row['TAICCA_ID']).includes('/')) {
+                        isMerged = true;
+                    }
+                } else {
+                    // Check ISBN for merged status if TAICCA_ID is missing
+                    const isbn = row['isbn'];
+                    if (isbn && String(isbn).includes('/')) {
+                        isMerged = true;
+                    }
                 }
-                
-                tr.appendChild(td);
-            });
-            
-            fragment.appendChild(tr);
-        });
-        
-        tableBody.appendChild(fragment);
-    }
 
-    function toggleSelection(id, checkbox) {
-        if (checkbox.checked) {
-            selectedIds.add(id);
-        } else {
-            selectedIds.delete(id);
+                if (isMerged) {
+                    tr.classList.add('merged-row');
+                }
+
+                // Checkbox
+                const tdCb = document.createElement('td');
+                tdCb.className = 'checkbox-cell';
+                const isChecked = selectedIds.has(String(id)) ? 'checked' : '';
+                tdCb.innerHTML = `<input type="checkbox" value="${id}" onchange="toggleSelection('${id}', this)" ${isChecked}>`;
+                tr.appendChild(tdCb);
+
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header];
+                    td.title = row[header]; // Tooltip for full content
+
+                    // title 欄位使用特殊樣式，允許換行
+                    if (header === 'title') {
+                        td.className = 'title-cell';
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                fragment.appendChild(tr);
+            });
+
+            tableBody.appendChild(fragment);
         }
-        updateSelectedCount();
-    }
-    
-    function toggleAll(checkbox) {
-        const checkboxes = document.querySelectorAll('#table-body input[type="checkbox"]');
-        checkboxes.forEach(cb => {
-            cb.checked = checkbox.checked;
-            const id = cb.value;
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(currentData.length / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function toggleSelection(id, checkbox) {
+            // Ensure ID is string for Set consistency
+            const strId = String(id);
             if (checkbox.checked) {
-                selectedIds.add(id);
+                selectedIds.add(strId);
             } else {
-                selectedIds.delete(id);
+                selectedIds.delete(strId);
             }
-        });
-        updateSelectedCount();
-    }
-
-    function updateSelectedCount() {
-        document.getElementById('selected-count').textContent = `${selectedIds.size} selected`;
-    }
-
-    async function mergeSelected() {
-        if (selectedIds.size < 2) {
-            alert('Please select at least 2 rows to merge.');
-            return;
+            updateSelectedCount();
         }
 
-        if (!confirm(`Are you sure you want to merge ${selectedIds.size} items?`)) return;
+        function toggleAll(checkbox) {
+            // Only toggle visible rows for performance and UX or all rows?
+            // Typically toggleAll affects visible rows or entire dataset.
+            // Given large dataset, let's affect VISIBLE rows to avoid massive Set operations if we did all.
+            // But user might expect all. Let's do visible rows for now because checking 7000 boxes is slow if we query DOM.
+            // Better: iterate current page data.
 
-        showLoading(true);
-        try {
-            const response = await fetch('/api/merge', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: Array.from(selectedIds) })
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, currentData.length);
+            const pageData = currentData.slice(startIndex, endIndex);
+
+            pageData.forEach(row => {
+                const id = String(row['index']);
+                if (checkbox.checked) {
+                    selectedIds.add(id);
+                } else {
+                    selectedIds.delete(id);
+                }
             });
-            
-            const result = await response.json();
-            if (result.success) {
-                await fetchData();
-            } else {
-                alert('Merge failed: ' + (result.error || 'Unknown error'));
+
+            // Update checkboxes in DOM
+            const checkboxes = document.querySelectorAll('#table-body input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            document.getElementById('selected-count').textContent = `${selectedIds.size} selected`;
+        }
+
+        async function mergeSelected() {
+            if (selectedIds.size < 2) {
+                alert('Please select at least 2 rows to merge.');
+                return;
             }
-        } catch (error) {
-            console.error('Error merging:', error);
-            alert('Error merging data');
-        } finally {
-            showLoading(false);
-        }
-    }
 
-    async function unmergeSelected() {
-        if (selectedIds.size === 0) {
-            alert('Please select items to unmerge.');
-            return;
-        }
+            if (!confirm(`Are you sure you want to merge ${selectedIds.size} items?`)) return;
 
-        if (!confirm(`Are you sure you want to unmerge ${selectedIds.size} items?`)) return;
-
-        showLoading(true);
-        try {
-            // Process sequentially or parallel? Parallel might have race conditions on file write.
-            // Let's do it one by one for safety, or change backend to accept list.
-            // Backend currently accepts single ID for unmerge.
-            // I'll loop here.
-            
-            const ids = Array.from(selectedIds);
-            let successCount = 0;
-            
-            for (const id of ids) {
-                 const response = await fetch('/api/unmerge', {
+            showLoading(true);
+            try {
+                const response = await fetch('/api/merge', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
+                    body: JSON.stringify({ ids: Array.from(selectedIds) })
                 });
+
                 const result = await response.json();
-                if (result.success) successCount++;
+                if (result.success) {
+                    await fetchData();
+                } else {
+                    alert('Merge failed: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error merging:', error);
+                alert('Error merging data');
+            } finally {
+                showLoading(false);
             }
-            
-            await fetchData();
-            alert(`Unmerged ${successCount} items.`);
-            
-        } catch (error) {
-            console.error('Error unmerging:', error);
-            alert('Error unmerging data');
-        } finally {
-            showLoading(false);
         }
-    }
 
-    function showLoading(show) {
-        document.getElementById('loading').style.display = show ? 'flex' : 'none';
-    }
+        async function unmergeSelected() {
+            if (selectedIds.size === 0) {
+                alert('Please select items to unmerge.');
+                return;
+            }
 
-    // Initial load
-    fetchData();
-</script>
+            if (!confirm(`Are you sure you want to unmerge ${selectedIds.size} items?`)) return;
+
+            showLoading(true);
+            try {
+                // Process sequentially or parallel? Parallel might have race conditions on file write.
+                // Let's do it one by one for safety, or change backend to accept list.
+                // Backend currently accepts single ID for unmerge.
+                // I'll loop here.
+
+                const ids = Array.from(selectedIds);
+                let successCount = 0;
+
+                for (const id of ids) {
+                    const response = await fetch('/api/unmerge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id })
+                    });
+                    const result = await response.json();
+                    if (result.success) successCount++;
+                }
+
+                await fetchData();
+                alert(`Unmerged ${successCount} items.`);
+
+            } catch (error) {
+                console.error('Error unmerging:', error);
+                alert('Error unmerging data');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'flex' : 'none';
+        }
+
+        // Initial load
+        fetchData();
+    </script>
 
 </body>
+
 </html>
