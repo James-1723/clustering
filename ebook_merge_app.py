@@ -22,17 +22,76 @@ _cache = {
     'input_mtime': None
 }
 
+def consolidate_row(row):
+    """從書商欄位中遞補大欄位（Consolidate）- 電子書版本"""
+    # Helper to check if value is empty or 'nan'
+    def is_empty(val):
+        if pd.isna(val): return True
+        s = str(val).strip().lower()
+        return not s or s == 'nan'
+
+    # ISBN
+    if is_empty(row.get('isbn')):
+        for c in ['bookscom_isbn', 'readmoo_isbn', 'kobo_isbn']:
+            if not is_empty(row.get(c)):
+                row['isbn'] = row[c]
+                break
+
+    # Title (Standard)
+    if is_empty(row.get('title')):
+        for c in ['bookscom_title', 'readmoo_title', 'kobo_title']:
+            if not is_empty(row.get(c)):
+                row['title'] = row[c]
+                break
+                
+    # Processed Title
+    if is_empty(row.get('processed_title')):
+        for c in ['bookscom_processed_title', 'readmoo_processed_title', 'kobo_processed_title']:
+            if not is_empty(row.get(c)):
+                row['processed_title'] = row[c]
+                break
+
+    # Title (original)
+    if is_empty(row.get('original_title')):
+        for c in ['bookscom_original_title', 'readmoo_original_title', 'kobo_original_title']:
+            if not is_empty(row.get(c)):
+                row['original_title'] = row[c]
+                break
+                
+    # Author
+    if is_empty(row.get('author')):
+        for c in ['bookscom_author', 'readmoo_author', 'kobo_author']:
+            if not is_empty(row.get(c)):
+                row['author'] = row[c]
+                break
+                
+    # Translator
+    if is_empty(row.get('translator')):
+        for c in ['bookscom_translator', 'readmoo_translator', 'kobo_translator']:
+            if not is_empty(row.get(c)):
+                row['translator'] = row[c]
+                break
+                
+    # Publisher
+    if is_empty(row.get('publisher')):
+        for c in ['bookscom_publisher', 'readmoo_publisher', 'kobo_publisher']:
+            if not is_empty(row.get(c)):
+                row['publisher'] = row[c]
+                break
+    return row
+
 def get_cached_data(filepath, cache_key, mtime_key):
     """從快取讀取資料，如果檔案有修改則重新讀取"""
     try:
         current_mtime = os.path.getmtime(filepath)
         if _cache[mtime_key] is None or _cache[mtime_key] != current_mtime or _cache[cache_key] is None:
-            _cache[cache_key] = pd.read_csv(filepath)
+            # 加入 dtype=str 避免 DtypeWarning
+            _cache[cache_key] = pd.read_csv(filepath, dtype=str)
             _cache[mtime_key] = current_mtime
         return _cache[cache_key].copy()
     except Exception as e:
         print(f"Error loading data from {filepath}: {e}")
-        return pd.read_csv(filepath)
+        return pd.read_csv(filepath, dtype=str)
 
 def invalidate_cache():
     """清除快取"""
@@ -73,21 +132,48 @@ def merge_two_books(book1, book2):
             else:
                 merged[col] = ''
     
-    # isbn 系列：特殊處理
+    # isbn 系列：特殊處理 (去重 + 保留空白)
     for col in ['isbn']:
         val1 = str(book1.get(col, '')).strip() if pd.notna(book1.get(col)) else ''
         val2 = str(book2.get(col, '')).strip() if pd.notna(book2.get(col)) else ''
         
-        if val1 and val2 and val1 != val2:
-            merged[col] = f"{val1} / {val2}"
-        elif val1 and not val2:
-            merged[col] = f"{val1} / （空白）"
-        elif not val1 and val2:
-            merged[col] = f"（空白）/ {val2}"
-        elif val1:
-            merged[col] = val1
+        # 輔助函數：解析字串為列表，並回傳是否包含「空」意涵
+        def parse_isbns(val):
+            items = []
+            has_empty = False
+            if not val:
+                has_empty = True
+            else:
+                parts = [x.strip() for x in val.split('/')]
+                for p in parts:
+                    if not p or p.lower() == 'nan':
+                        has_empty = True
+                    elif p == '（空白）':
+                        has_empty = True
+                    else:
+                        items.append(p)
+            return items, has_empty
+
+        items1, empty1 = parse_isbns(val1)
+        items2, empty2 = parse_isbns(val2)
+        
+        # 合併所有有效 ISBN 並去重 (保持順序)
+        all_items = []
+        seen = set()
+        for x in items1 + items2:
+            if x not in seen:
+                all_items.append(x)
+                seen.add(x)
+        
+        # 如果任一邊有空，則結果要包含「（空白）」
+        result_parts = all_items[:]
+        if empty1 or empty2:
+            result_parts.append('（空白）')
+            
+        if result_parts:
+            merged[col] = " / ".join(result_parts)
         else:
-            merged[col] = ''
+            merged[col] = ""
     
     # 直接填補的欄位
     fill_cols = [
@@ -120,24 +206,36 @@ def merge_two_books(book1, book2):
     ]
     
     for col in fill_main_cols:
-        if pd.notna(book1.get(col)) and str(book1.get(col)).strip():
-            merged[col] = book1[col]
-        elif pd.notna(book2.get(col)) and str(book2.get(col)).strip():
-            merged[col] = book2[col]
+        val1 = book1.get(col, '')
+        val2 = book2.get(col, '')
+        
+        # 優先使用 book1，如果 book1 為空才使用 book2
+        # 注意：這裡要排除 'nan' 字串
+        is_val1_ok = pd.notna(val1) and str(val1).strip() and str(val1).strip().lower() != 'nan'
+        is_val2_ok = pd.notna(val2) and str(val2).strip() and str(val2).strip().lower() != 'nan'
+        
+        if is_val1_ok:
+            merged[col] = val1
+        elif is_val2_ok:
+            merged[col] = val2
         else:
             merged[col] = ''
     
-    # min_publish_date 和 max_publish_date：只從四間書商的日期中比較
+    # min_publish_date 和 max_publish_date：只從三間書商的日期中比較
     dates = []
-    date_formats = ['%Y/%m/%d', '%Y-%m-%d', '%m/%d/%y', '%m/%d/%Y', '%d/%m/%y', '%d/%m/%Y']
     
     for col in ['bookscom_publish_date', 'kobo_publish_date', 'readmoo_publish_date']:
         for book in [book1, book2]:
-            if pd.notna(book.get(col)) and str(book.get(col)).strip():
-                date_str = str(book[col]).strip()
-                date_obj = parse_date(date_str)
-                if date_obj:
-                    dates.append(date_obj)
+            val = book.get(col)
+            if pd.notna(val) and str(val).strip() and str(val).strip().lower() != 'nan':
+                try:
+                    date_str = str(val).strip()
+                    # 使用 pd.to_datetime 更強大的解析能力
+                    date_obj = pd.to_datetime(date_str, errors='coerce')
+                    if pd.notna(date_obj):
+                        dates.append(date_obj)
+                except:
+                    pass
     
     if dates:
         merged['min_publish_date'] = min(dates).strftime('%Y-%m-%d')
@@ -271,11 +369,11 @@ def merge_data():
     df = ensure_index_column(df)
     
     # Determine ID column based on input format
-    # If all IDs are digits/integers, assume 'index'
+    # Since we use dtype=str, handle IDs as strings
     is_numeric_ids = True
     try:
-        converted_ids = [int(x) for x in ids_to_merge]
-        ids_to_merge = converted_ids
+        [int(x) for x in ids_to_merge]
+        ids_to_merge = [str(x) for x in ids_to_merge]
     except:
         is_numeric_ids = False
     
@@ -285,25 +383,22 @@ def merge_data():
         id_col = 'TAICCA_ID'
             
     # Filter rows to merge
-    rows_to_merge = df[df[id_col].isin(ids_to_merge)].to_dict('records')
+    rows_to_merge = df[df[id_col].astype(str).isin(ids_to_merge)].to_dict('records')
     
     if len(rows_to_merge) < 2:
          return jsonify({'error': 'Could not find all items to merge'}), 400
 
+    # Consolidate data for each row before merging
+    rows_to_merge = [consolidate_row(row) for row in rows_to_merge]
+
     # 找到要合併的資料中，最小的 index 位置
-    merge_indices = df[df[id_col].isin(ids_to_merge)].index
+    merge_indices = df[df[id_col].astype(str).isin(ids_to_merge)].index
     insert_position = merge_indices.min()
     
     merged_row = merge_multiple_books(rows_to_merge)
     
     # Remove original rows
-    df = df[~df[id_col].isin(ids_to_merge)]
-    insert_position = merge_indices.min()
-    
-    merged_row = merge_multiple_books(rows_to_merge)
-    
-    # Remove original rows
-    df = df[~df[id_col].isin(ids_to_merge)]
+    df = df[~df[id_col].astype(str).isin(ids_to_merge)]
     
     # Convert merged_row back to DataFrame
     merged_df = pd.DataFrame([merged_row])
@@ -376,13 +471,13 @@ def unmerge_data():
     else:
         # HAS_ID = False: target_id is likely the index
         try:
-            target_idx = int(target_id)
-            merge_position = df[df['index'] == target_idx].index
+            target_str = str(target_id)
+            merge_position = df[df['index'].astype(str) == target_str].index
             
             if len(merge_position) > 0:
-                # Get the row and check production IDs
+                target_idx = target_id
                 target_row = df.loc[merge_position[0]]
-                print(f"[DEBUG] Target row for unmerge: {target_row.to_dict()}")
+                # print(f"[DEBUG] Processing Unmerge for Index: {target_idx}")
                 
                 # Check for IDs in production_ids columns
                 prod_cols = ['bookscom_production_id', 'kobo_production_id', 'readmoo_production_id']
@@ -391,7 +486,6 @@ def unmerge_data():
                 
                 for col in prod_cols:
                     val = str(target_row.get(col, '')).strip()
-                    # print(f"[DEBUG] Checking col {col}: '{val}'")
                     if val and val.lower() != 'nan':
                         p_ids = []
                         if '/' in val:
@@ -399,35 +493,37 @@ def unmerge_data():
                         else:
                             p_ids = [val]
                         
+                        # Clean IDs: remove .0 suffix if present
+                        p_ids = [x[:-2] if x.endswith('.0') else x for x in p_ids]
+                        
                         # Filter empty and placeholders
                         p_ids = [x for x in p_ids if x and x != '（空白）' and x.lower() != 'nan']
                         
                         if p_ids:
                             has_valid_id = True
                             original_ids_map[col].extend(p_ids)
-                
-                # print(f"[DEBUG] has_valid_id: {has_valid_id}")
-                # print(f"[DEBUG] original_ids_map: {original_ids_map}")
 
                 if has_valid_id:
                     # Find original rows by any of the production IDs
-                    # We construct a mask that checks if any of the columns match the extracted IDs
                     mask = pd.Series([False] * len(input_df))
                     
-                    found_any = False
                     for col, ids in original_ids_map.items():
                         if ids:
-                            # print(f"[DEBUG] Searching {col} for ids: {ids}")
-                            sub_mask = input_df[col].astype(str).isin(ids)
-                            if sub_mask.any():
-                                found_any = True
+                            # Also handle .0 in input_df for comparison just in case
+                            col_str = input_df[col].astype(str).apply(lambda x: x[:-2] if x.endswith('.0') else x)
+                            sub_mask = col_str.isin(ids)
                             mask = mask | sub_mask
                             
-                    original_rows = input_df[mask]
-                    # print(f"[DEBUG] Total original rows found: {len(original_rows)}")
+                    original_rows = input_df[mask].copy() # Add .copy()
                     
                     if original_rows.empty:
-                         return jsonify({'error': 'No original data found for the extracted IDs'}), 404
+                            return jsonify({'error': 'No original data found for the extracted IDs'}), 404
+                    
+                    # ✅ 對還原後的原始資料執行 Consolidate
+                    original_rows_dict = original_rows.to_dict('records')
+                    consolidated_rows = [consolidate_row(row) for row in original_rows_dict]
+                    original_rows = pd.DataFrame(consolidated_rows)
+                    
                 else:
                     return jsonify({'error': 'Selected row has no valid Production IDs to trace'}), 400
         except ValueError:
