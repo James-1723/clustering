@@ -299,15 +299,40 @@
                 const id = row['index'];
                 let isMerged = false;
 
-                if (row['TAICCA_ID'] !== undefined && row['TAICCA_ID']) {
-                    if (String(row['TAICCA_ID']).includes('/')) {
+                // Determine merged status based on vendor IDs count
+                // If a book has 2 or more vendor IDs, it means it's a result of a merge
+                let vendorCount = 0;
+                const vendorCols = [
+                    'bookscom_production_id',
+                    'eslite_production_id',
+                    'kingstone_production_id',
+                    'sanmin_production_id'
+                ];
+
+                vendorCols.forEach(col => {
+                    const val = row[col];
+                    if (val && String(val).trim() !== '' && String(val).toLowerCase() !== 'nan') {
+                        vendorCount++;
+                    }
+                });
+
+                if (vendorCount >= 2) {
+                    isMerged = true;
+                } else {
+                    // Fallback: keeping the slash check for TAICCA_ID just in case, 
+                    // or for manually merged rows within the same vendor (e.g. bookscom ID1 / ID2)
+                    if (row['TAICCA_ID'] && String(row['TAICCA_ID']).includes('/')) {
                         isMerged = true;
                     }
-                } else {
-                    // Check ISBN for merged status if TAICCA_ID is missing
-                    const isbn = row['isbn'];
-                    if (isbn && String(isbn).includes('/')) {
-                        isMerged = true;
+                    // Also check if any single vendor column has merged IDs (contains '/')
+                    else {
+                        for (const col of vendorCols) {
+                            const val = row[col];
+                            if (val && String(val).includes('/')) {
+                                isMerged = true;
+                                break;
+                            }
+                        }
                     }
                 }
 
