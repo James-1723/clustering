@@ -200,7 +200,12 @@
                 <div class="pagination-controls"
                     style="display: flex; gap: 5px; align-items: center; margin-right: 10px;">
                     <button class="btn-secondary" onclick="prevPage()">Prev</button>
-                    <span id="page-info">Page 1</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <span>Page</span>
+                        <input type="number" id="page-input" value="1" min="1"
+                            style="width:50px; padding:2px; text-align:center;" onchange="goToPage(this.value)">
+                        <span id="page-total"> / 1</span>
+                    </div>
                     <button class="btn-secondary" onclick="nextPage()">Next</button>
                 </div>
                 <button class="btn-primary" onclick="mergeSelected()">Merge Selected</button>
@@ -225,11 +230,28 @@
         </div>
     </div>
 
+    <!-- Create Row Modal -->
+    <div id="create-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200;">
+        <div
+            style="background:white; margin:5% auto; padding:20px; width:80%; max-width:800px; max-height:80%; overflow-y:auto; border-radius:8px;">
+            <h2>Create New Row</h2>
+            <div id="create-form-container" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <!-- Inputs generated dynamically -->
+            </div>
+            <div style="margin-top:20px; text-align:right;">
+                <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveNewRow()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentData = [];
         let selectedIds = new Set();
         let currentPage = 1;
         const pageSize = 50;
+        let availableHeaders = [];
 
         async function fetchData(keepPage = false) {
             showLoading(true);
@@ -253,8 +275,14 @@
             const tableBody = document.getElementById('table-body');
             const pageInfo = document.getElementById('page-info');
 
+            // --- Build Input Row ---
+            // Ideally we re-use the input row if it exists to keep focus?
+            // But we are re-rendering the whole table body. 
+            // Let's create it fresh every time. Input data will be lost on refresh/page change, which is expected.
+
             tableHeader.innerHTML = '';
             tableBody.innerHTML = '';
+
             updateSelectedCount();
 
             if (currentData.length === 0) {
@@ -267,10 +295,20 @@
             if (currentPage > totalPages) currentPage = totalPages;
             if (currentPage < 1) currentPage = 1;
 
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${currentData.length} items)`;
+            // Update Pagination UI
+            const pageInput = document.getElementById('page-input');
+            const pageTotal = document.getElementById('page-total');
+            if (pageInput) {
+                pageInput.value = currentPage;
+                pageInput.max = totalPages;
+            }
+            if (pageTotal) {
+                pageTotal.textContent = ' / ' + totalPages + ' (' + currentData.length + ' items)';
+            }
+            // pageInfo.textContent = ... removed
 
             // Headers
-            const headers = Object.keys(currentData[0]);
+            availableHeaders = Object.keys(currentData[0]);
 
             // Checkbox header
             const thCb = document.createElement('th');
@@ -278,11 +316,14 @@
             thCb.innerHTML = '<input type="checkbox" onclick="toggleAll(this)">';
             tableHeader.appendChild(thCb);
 
-            headers.forEach(header => {
+            availableHeaders.forEach(header => {
                 const th = document.createElement('th');
                 th.textContent = header;
                 tableHeader.appendChild(th);
             });
+
+            // Removed static Input Row
+
 
             // Rows - Pagination Logic
             const startIndex = (currentPage - 1) * pageSize;
@@ -293,14 +334,13 @@
 
             pageData.forEach(row => {
                 const tr = document.createElement('tr');
+                tr.id = 'row-' + row['index']; // Add ID for reference
 
                 // Determine ID and merged status
-                // Always use index for identification to ensure consistency with backend
                 const id = row['index'];
                 let isMerged = false;
 
                 // Determine merged status based on vendor IDs count
-                // If a book has 2 or more vendor IDs, it means it's a result of a merge
                 let vendorCount = 0;
                 const vendorCols = [
                     'bookscom_production_id',
@@ -319,12 +359,9 @@
                 if (vendorCount >= 2) {
                     isMerged = true;
                 } else {
-                    // Fallback: keeping the slash check for TAICCA_ID just in case, 
-                    // or for manually merged rows within the same vendor (e.g. bookscom ID1 / ID2)
                     if (row['TAICCA_ID'] && String(row['TAICCA_ID']).includes('/')) {
                         isMerged = true;
                     }
-                    // Also check if any single vendor column has merged IDs (contains '/')
                     else {
                         for (const col of vendorCols) {
                             const val = row[col];
@@ -340,21 +377,72 @@
                     tr.classList.add('merged-row');
                 }
 
-                // Checkbox
+                // Checkbox & Insert Button
                 const tdCb = document.createElement('td');
                 tdCb.className = 'checkbox-cell';
+                tdCb.style.display = 'flex';
+                tdCb.style.alignItems = 'center';
+                tdCb.style.gap = '5px';
+
                 const isChecked = selectedIds.has(String(id)) ? 'checked' : '';
-                tdCb.innerHTML = `<input type="checkbox" value="${id}" onchange="toggleSelection('${id}', this)" ${isChecked}>`;
+                tdCb.innerHTML = `<input type="checkbox" value="${id}" onchange="toggleSelection('${id}', this)" ${isChecked}>
+                <span onclick="toggleInsertRow('${id}')" style="cursor:pointer;color:green;font-weight:bold;font-size:1.2em;margin-right:5px;" title="Insert Row Below">➕</span>
+                <span onclick="deleteRow('${id}')" style="cursor:pointer;color:red;font-size:1.2em;" title="Delete Row">🗑️</span>`;
                 tr.appendChild(tdCb);
 
-                headers.forEach(header => {
+                availableHeaders.forEach(header => {
                     const td = document.createElement('td');
-                    td.textContent = row[header];
-                    td.title = row[header]; // Tooltip for full content
 
-                    // title 欄位使用特殊樣式，允許換行
+                    if (header === 'index') {
+                        td.textContent = row[header];
+                        td.style.color = '#999';
+                        td.style.textAlign = 'center';
+                        td.style.padding = '8px';
+                    } else {
+                        // Use contentEditable td for "original look"
+                        td.textContent = row[header] == null ? '' : row[header];
+                        td.dataset.col = header;
+                        td.dataset.idx = id;
+                        td.contentEditable = true;
+
+                        // Style: inherit everything to look "original"
+                        // Add a subtle indicator on hover/focus so user knows it's editable
+                        td.style.cursor = 'text';
+                        td.style.minWidth = '50px'; // Prevent collapse
+
+                        // Events
+                        td.onblur = function () {
+                            // Only update if changed
+                            if (this.textContent !== (String(row[header] || ''))) {
+                                updateRowData(id, header, this.textContent);
+                            }
+                        };
+
+                        td.onfocus = function () {
+                            // Optional: Highlight active cell slightly
+                            this.style.backgroundColor = '#f8f9fa';
+                            this.style.outline = '2px solid #22c55e';
+                            this.style.zIndex = '1'; // Bring to front for outline
+                        };
+
+                        // Restore background on blur (handled by CSS usually but inline here for safety)
+                        td.addEventListener('blur', function () {
+                            this.style.backgroundColor = '';
+                            this.style.outline = '';
+                            this.style.zIndex = '';
+                        });
+
+                        td.addEventListener('paste', handlePaste);
+                        // Enter key behavior? 
+                        // Default contentEditable allows newlines. If user wants single line, we capture Enter.
+                        // Assuming multi-line is OK (textarea was used before).
+                        // If user wants to "save on enter", we can add that.
+                        // Let's stick to default behavior + blur save for now.
+                    }
+
                     if (header === 'title') {
                         td.className = 'title-cell';
+                        td.style.minWidth = '300px';
                     }
 
                     tr.appendChild(td);
@@ -364,6 +452,88 @@
             });
 
             tableBody.appendChild(fragment);
+        }
+
+        // Paste Logic
+        function handlePaste(e) {
+            e.preventDefault();
+            const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+            if (!clipboardData) return;
+
+            // Simple split by tab
+            const values = clipboardData.split('\t');
+
+            // Get all visible inputs
+            const inputs = Array.from(document.querySelectorAll('#input-row input.inline-input'));
+
+            // Find start index based on current target
+            const targetInput = e.target;
+            const startIndex = inputs.indexOf(targetInput);
+
+            if (startIndex === -1) return;
+
+            // Fill inputs
+            for (let i = 0; i < values.length; i++) {
+                if (startIndex + i < inputs.length) {
+                    inputs[startIndex + i].value = values[i].trim();
+                }
+            }
+        }
+
+        async function saveNewRow() {
+            const inputs = document.querySelectorAll('#input-row input.inline-input');
+            const newData = {};
+            let hasData = false;
+
+            inputs.forEach(input => {
+                const key = input.dataset.col;
+                const val = input.value.trim();
+                if (val) {
+                    newData[key] = val;
+                    hasData = true;
+                }
+            });
+
+            if (!hasData) {
+                alert('Please enter some data.');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const response = await fetch('/api/create_row', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    // Refresh
+                    await fetchData(true);
+                    alert('Row added successfully!');
+                } else {
+                    alert('Failed to add row: ' + result.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error submitting data');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function goToPage(val) {
+            const page = parseInt(val);
+            const totalPages = Math.ceil(currentData.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+            } else {
+                alert('Invalid page number');
+                // Reset input
+                document.getElementById('page-input').value = currentPage;
+            }
         }
 
         function prevPage() {
@@ -382,7 +552,6 @@
         }
 
         function toggleSelection(id, checkbox) {
-            // Ensure ID is string for Set consistency
             const strId = String(id);
             if (checkbox.checked) {
                 selectedIds.add(strId);
@@ -393,12 +562,6 @@
         }
 
         function toggleAll(checkbox) {
-            // Only toggle visible rows for performance and UX or all rows?
-            // Typically toggleAll affects visible rows or entire dataset.
-            // Given large dataset, let's affect VISIBLE rows to avoid massive Set operations if we did all.
-            // But user might expect all. Let's do visible rows for now because checking 7000 boxes is slow if we query DOM.
-            // Better: iterate current page data.
-
             const startIndex = (currentPage - 1) * pageSize;
             const endIndex = Math.min(startIndex + pageSize, currentData.length);
             const pageData = currentData.slice(startIndex, endIndex);
@@ -412,7 +575,6 @@
                 }
             });
 
-            // Update checkboxes in DOM
             const checkboxes = document.querySelectorAll('#table-body input[type="checkbox"]');
             checkboxes.forEach(cb => {
                 cb.checked = checkbox.checked;
@@ -443,7 +605,6 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    // 清空選擇
                     selectedIds.clear();
                     await fetchData(true); // ✅ Keep page
                 } else {
@@ -467,11 +628,6 @@
 
             showLoading(true);
             try {
-                // Process sequentially or parallel? Parallel might have race conditions on file write.
-                // Let's do it one by one for safety, or change backend to accept list.
-                // Backend currently accepts single ID for unmerge.
-                // I'll loop here.
-
                 const ids = Array.from(selectedIds);
                 let successCount = 0;
 
@@ -501,8 +657,271 @@
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
+        // --- Revised Functions for Contextual Insert ---
+
+        function toggleInsertRow(targetId) {
+            const targetRow = document.getElementById('row-' + targetId);
+            if (!targetRow) return;
+
+            // Check if already open
+            const nextRow = targetRow.nextSibling;
+            if (nextRow && nextRow.classList.contains('input-row-temp')) {
+                nextRow.remove();
+                return;
+            }
+
+            // Create Input Row
+            const inputRow = document.createElement('tr');
+            inputRow.className = 'input-row-temp';
+            inputRow.style.backgroundColor = '#f0fdf4';
+            inputRow.style.borderBottom = '2px solid #22c55e';
+
+            // Save Button Cell
+            const tdAction = document.createElement('td');
+            tdAction.className = 'checkbox-cell';
+            tdAction.innerHTML = `<button onclick="saveNewRow('${targetId}')" title="Save" style="background:none;border:none;cursor:pointer;font-size:1.5rem;">💾</button>`;
+            inputRow.appendChild(tdAction);
+
+            availableHeaders.forEach((header, index) => {
+                const td = document.createElement('td');
+                if (header === 'index') {
+                    td.textContent = '(New)';
+                    td.style.color = '#999';
+                    td.style.textAlign = 'center';
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'inline-input';
+                    input.dataset.col = header;
+                    input.style.width = '100%';
+                    input.style.boxSizing = 'border-box';
+                    input.style.border = '1px solid #ddd';
+                    input.style.padding = '4px';
+                    input.placeholder = header;
+
+                    input.addEventListener('paste', handlePaste);
+                    input.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            saveNewRow(targetId);
+                        }
+                    });
+
+                    td.appendChild(input);
+                }
+                inputRow.appendChild(td);
+            });
+
+            targetRow.parentNode.insertBefore(inputRow, targetRow.nextSibling);
+
+            setTimeout(() => {
+                const firstInput = inputRow.querySelector('input.inline-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+
+        // Updated Paste to be context-aware (Supports Input/TextArea and ContentEditable TD)
+        handlePaste = function (e) {
+            e.preventDefault();
+            const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+            if (!clipboardData) return;
+
+            const values = clipboardData.split('\t');
+            const target = e.target;
+            const row = target.closest('tr');
+            if (!row) return;
+
+            // Case 1: Input/Textarea (Insert Row temp)
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                const inputs = Array.from(row.querySelectorAll('input.inline-input, textarea.inline-input'));
+                const startIndex = inputs.indexOf(target);
+
+                if (startIndex === -1) return;
+
+                for (let i = 0; i < values.length; i++) {
+                    if (startIndex + i < inputs.length) {
+                        inputs[startIndex + i].value = values[i].trim();
+                    }
+                }
+            }
+            // Case 2: ContentEditable TD (Existing Data Row)
+            else if (target.tagName === 'TD' && target.isContentEditable) {
+                // Find all editable TDs in this row
+                const cells = Array.from(row.children).filter(c => c.isContentEditable);
+                const startIndex = cells.indexOf(target);
+
+                if (startIndex === -1) return;
+
+                for (let i = 0; i < values.length; i++) {
+                    if (startIndex + i < cells.length) {
+                        const cell = cells[startIndex + i];
+                        const val = values[i].trim();
+
+                        // Update UI
+                        cell.textContent = val;
+
+                        // Trigger immediate save (as these cells might not trigger blur)
+                        updateRowData(cell.dataset.idx, cell.dataset.col, val);
+                    }
+                }
+            }
+        };
+
+        // Updated Save to be context-aware
+        // (Overwrite previous function)
+        saveNewRow = async function (insertAfterId = null) {
+            let inputRow;
+
+            if (insertAfterId) {
+                // Contextual Insert
+                const targetRow = document.getElementById('row-' + insertAfterId);
+                if (targetRow && targetRow.nextSibling && targetRow.nextSibling.classList.contains('input-row-temp')) {
+                    inputRow = targetRow.nextSibling;
+                }
+            } else {
+                // Top Static Input (if user uses that)
+                inputRow = document.getElementById('input-row');
+            }
+
+            if (!inputRow) return;
+
+            const inputs = inputRow.querySelectorAll('input.inline-input');
+            const newData = {};
+            let hasData = false;
+
+            inputs.forEach(input => {
+                const key = input.dataset.col;
+                const val = input.value.trim();
+                if (val) {
+                    newData[key] = val;
+                    hasData = true;
+                }
+            });
+
+            if (!hasData) {
+                alert('Please enter some data.');
+                return;
+            }
+
+            if (insertAfterId) {
+                newData['insert_after'] = insertAfterId;
+            }
+
+            showLoading(true);
+            try {
+                const response = await fetch('/api/create_row', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    if (inputRow.classList.contains('input-row-temp')) {
+                        inputRow.remove();
+                    } else {
+                        // Clear static inputs
+                        inputs.forEach(i => i.value = '');
+                    }
+                    await fetchData(true);
+                    // alert('Row saved!');
+                } else {
+                    alert('Failed: ' + result.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error submitting data');
+            } finally {
+                showLoading(false);
+            }
+        };
+
         // Initial load
         fetchData();
+
+        // --- Update and Delete Functions ---
+
+        async function updateRowData(idx, col, val) {
+            const data = {};
+            data[col] = val;
+
+            try {
+                // Optional: visual saving indicator?
+                const response = await fetch('/api/update_row', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index: idx, data: data })
+                });
+                const res = await response.json();
+                if (!res.success) {
+                    alert('Update failed: ' + res.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Update error');
+            }
+        }
+
+        async function deleteRow(id) {
+            if (!confirm('Delete row ' + id + '? This will re-index subsequent rows.')) return;
+
+            showLoading(true);
+            try {
+                const response = await fetch('/api/delete_row', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const res = await response.json();
+                if (res.success) {
+                    await fetchData(true);
+                } else {
+                    alert('Delete failed: ' + res.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Delete error');
+            } finally {
+                showLoading(false);
+            }
+        }
+        async function deleteRow(id) {
+            if (!confirm('Delete row ' + id + '? This will re-index subsequent rows.')) return;
+
+            showLoading(true);
+            try {
+                const response = await fetch('/api/delete_row', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                const res = await response.json();
+                if (res.success) {
+                    await fetchData(true);
+                } else {
+                    alert('Delete failed: ' + res.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Delete error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Global Enter Key for Merge
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                // Ignore if user is typing in an input or textarea
+                const tagName = e.target.tagName;
+                if (tagName === 'INPUT' || tagName === 'TEXTAREA') return;
+
+                // Only trigger if rows are selected
+                if (selectedIds.size >= 2) {
+                    e.preventDefault(); // Prevent default scrolling/action
+                    mergeSelected();
+                }
+            }
+        });
     </script>
 
 </body>
