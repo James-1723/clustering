@@ -567,5 +567,116 @@ def unmerge_data():
     
     return jsonify({'success': True})
 
+@app.route('/api/create_row', methods=['POST'])
+def create_row():
+    new_data = request.json
+    if not new_data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    df = get_cached_data(TARGET_FILE, 'data', 'mtime')
+    df = ensure_index_column(df)
+    
+    insert_after = new_data.get('insert_after')
+    
+    # Prepare new row
+    new_row = {'index': -1}
+    for col in df.columns:
+        if col in new_data and col != 'index' and col != 'insert_after':
+            new_row[col] = str(new_data[col]).strip()
+        elif col != 'index':
+            new_row[col] = ''
+            
+    new_df = pd.DataFrame([new_row])
+    new_df = new_df[df.columns]
+    
+    if insert_after is not None:
+        try:
+            target_idx_str = str(insert_after)
+            matches = df.index[df['index'].astype(str) == target_idx_str].tolist()
+            
+            if matches:
+                insert_loc = matches[0] + 1
+                df_before = df.iloc[:insert_loc]
+                df_after = df.iloc[insert_loc:]
+                df = pd.concat([df_before, new_df, df_after], ignore_index=True)
+            else:
+                df = pd.concat([df, new_df], ignore_index=True)
+        except Exception as e:
+            print(f"Error inserting: {e}")
+            df = pd.concat([df, new_df], ignore_index=True)
+    else:
+        df = pd.concat([df, new_df], ignore_index=True)
+    
+    # Reindex
+    df = reindex_dataframe(df)
+
+    # Sort
+    cols = get_sorted_columns(df.columns)
+    df = df[cols]
+    
+    df.to_csv(TARGET_FILE, index=False)
+    invalidate_cache()
+    
+    return jsonify({'success': True})
+
+@app.route('/api/update_row', methods=['POST'])
+def update_row():
+    req_data = request.json
+    if not req_data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    target_idx = req_data.get('index')
+    updates = req_data.get('data') # Dict of col->val
+    
+    if target_idx is None or not updates:
+        return jsonify({'error': 'Missing index or data'}), 400
+        
+    df = get_cached_data(TARGET_FILE, 'data', 'mtime')
+    df = ensure_index_column(df)
+    
+    # Locate row
+    mask = df['index'].astype(str) == str(target_idx)
+    if not mask.any():
+        return jsonify({'error': 'Row not found'}), 404
+    
+    # Update values
+    idx_loc = df.index[mask][0]
+    
+    for col, val in updates.items():
+        if col in df.columns and col != 'index':
+             df.at[idx_loc, col] = str(val).strip()
+             
+    # Save
+    df.to_csv(TARGET_FILE, index=False)
+    invalidate_cache()
+    
+    return jsonify({'success': True})
+
+@app.route('/api/delete_row', methods=['POST'])
+def delete_row():
+    req_data = request.json
+    target_idx = req_data.get('id')
+    
+    if target_idx is None:
+        return jsonify({'error': 'Missing id'}), 400
+        
+    df = get_cached_data(TARGET_FILE, 'data', 'mtime')
+    df = ensure_index_column(df)
+    
+    # Remove row
+    original_len = len(df)
+    df = df[df['index'].astype(str) != str(target_idx)]
+    
+    if len(df) == original_len:
+         return jsonify({'error': 'Row not found'}), 404
+         
+    # Reindex
+    df = reindex_dataframe(df)
+    
+    df.to_csv(TARGET_FILE, index=False)
+    invalidate_cache()
+    
+    return jsonify({'success': True})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
