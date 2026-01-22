@@ -8,8 +8,11 @@ app = Flask(__name__)
 app.json.sort_keys = False
 
 DATA_DIR = 'input_data'
-FILE_7000 = os.path.join(DATA_DIR, 'output_book.csv')
-FILE_INPUT = os.path.join(DATA_DIR, '原資料.csv')
+# FILE_7000 = os.path.join(DATA_DIR, 'output_book.csv')
+# FILE_INPUT = os.path.join(DATA_DIR, '原資料.csv')
+
+FILE_7000 = os.path.join(DATA_DIR, '0122.csv')
+FILE_INPUT = os.path.join(DATA_DIR, '0122.csv')
 
 merge_count = 0
 
