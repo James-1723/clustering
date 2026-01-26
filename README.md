@@ -57,6 +57,7 @@
 - **取消合併 (Unmerge)**：勾選一筆已合併的資料（通常標示為灰色底），點擊 "Unmerge Selected"。
     - 系統會根據 ID（`TAICCA_ID` 或各通路的 `Production ID`）追朔並還原原始資料。
     - 即使是來自不同來源的「互補合併」（Production ID 無斜線分隔），只要能對應到原始資料，皆可還原。
+- **編輯資料**：點擊欄位內容可直接編輯、插入或刪除列。
 
 ## 注意事項
 
@@ -81,3 +82,20 @@
   FILE_INPUT = os.path.join(DATA_DIR, 'paper_unproccessed.csv') # 原始未處理資料
   ```
 
+## 更新日誌 (2026-01-26)
+
+### 電子書 (Ebook) 支援優化
+1. **EISBN 欄位支援**：
+   - 新增 `eisbn` 欄位的完整合併邏輯（支援多組 ISBN 以 `/` 分隔）。
+   - 支援從通路欄位 (`bookscom_eisbn`, `readmoo_eisbn`, `kobo_eisbn`) 自動填補主 `eisbn`。
+   - `Unmerge` 功能現在支援透過 `eisbn` 追朔原始資料，解決無 `Production ID` 的電子書無法還原的問題。
+2. **格式欄位與排序**：
+   - 新增電子書格式欄位 (`bookscom_type_ebook`, `readmoo_type_ebook`, `kobo_type_ebook`) 的保留與合併。
+   - 優化 CSV 輸出欄位排序，確保 URL 欄位固定排在最後，方便檢視。
+3. **Notebook 預處理**：
+   - `ebook_clustering.ipynb` 新增欄位整合邏輯 (`consolidate_eisbn` 等)，在分群前預先填補空缺欄位。
+
+### 前端介面 (Merge App)
+1. **電子書合併標示**：修正電子書合併列無法正確變色（藍底）的問題，現在正確支援 Readmoo 與 Kobo 的 ID 判斷。
+2. **URL 顯示優化**：所有 URL 欄位在網頁中會顯示為 **深藍色並帶底線**，提升視覺辨識度。
+3. **資料編輯與刪除**：新增行內資料編輯、插入新行與刪除行的功能。
