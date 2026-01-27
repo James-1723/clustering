@@ -332,9 +332,21 @@
 
             const fragment = document.createDocumentFragment();
 
-            pageData.forEach(row => {
+            pageData.forEach((row, rowIndex) => {
                 const tr = document.createElement('tr');
                 tr.id = 'row-' + row['index']; // Add ID for reference
+
+                // Check for duplicate ISBN with next row (Green Light Logic)
+                let showGreenLight = false;
+                const globalIdx = startIndex + rowIndex;
+                if (globalIdx + 1 < currentData.length) {
+                    const nextRow = currentData[globalIdx + 1];
+                    const currIsbn = String(row['isbn'] || '').trim();
+                    const nextIsbn = String(nextRow['isbn'] || '').trim();
+                    if (currIsbn && nextIsbn && currIsbn === nextIsbn) {
+                        showGreenLight = true;
+                    }
+                }
 
                 // Determine ID and merged status
                 const id = row['index'];
@@ -394,7 +406,12 @@
                     const td = document.createElement('td');
 
                     if (header === 'index') {
-                        td.textContent = row[header];
+                        if (showGreenLight) {
+                            td.innerHTML = `<span style="display:inline-block;width:10px;height:10px;background-color:#22c55e;border-radius:50%;margin-right:5px;vertical-align:middle;" title="Same ISBN as next row"></span>` + row[header];
+                        } else {
+                            td.textContent = row[header];
+                        }
+                        // td.textContent = row[header]; // Replaced by logic above
                         td.style.color = '#999';
                         td.style.textAlign = 'center';
                         td.style.padding = '8px';
