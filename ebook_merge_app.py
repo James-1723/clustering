@@ -9,7 +9,7 @@ app.json.sort_keys = False
 
 # DATA_DIR = 'output_data'
 TARGET_FILE = "input_data/ebook_output.csv"
-SOURCE_FILE = "input_data/ebook_test.csv"
+SOURCE_FILE = "input_data/原資料.csv"
 
 merge_count = 0
 HAS_ID = False
@@ -174,10 +174,53 @@ def merge_two_books(book1, book2):
             merged[col] = " / ".join(result_parts)
         else:
             merged[col] = ""
+
+    # eisbn 系列：同 isbn 邏輯
+    for col in ['eisbn']:
+        val1 = str(book1.get(col, '')).strip()
+        val2 = str(book2.get(col, '')).strip()
+        
+        def parse_isbns(val):
+            # ... reuse logic logic is hard inside loop, let's just copy the logic structure
+            if not val or val.lower() == 'nan':
+                return [], False
+            parts = val.split('/')
+            items = []
+            has_empty = False
+            for p in parts:
+                p = p.strip()
+                if p:
+                    if p.lower() == 'nan':
+                        has_empty = False # Treat 'nan' string as nothing? No, keep logic consistent
+                    elif p == '（空白）':
+                        has_empty = True
+                    else:
+                        items.append(p)
+            return items, has_empty
+
+        items1, empty1 = parse_isbns(val1)
+        items2, empty2 = parse_isbns(val2)
+        
+        all_items = []
+        seen = set()
+        for x in items1 + items2:
+            if x not in seen:
+                all_items.append(x)
+                seen.add(x)
+        
+        result_parts = all_items[:]
+        if empty1 or empty2:
+            result_parts.append('（空白）')
+            
+        if result_parts:
+            merged[col] = " / ".join(result_parts)
+        else:
+            merged[col] = ""
     
     # 直接填補的欄位
     fill_cols = [
         'bookscom_isbn', 'readmoo_isbn', 'kobo_isbn',
+        'bookscom_eisbn', 'readmoo_eisbn', 'kobo_eisbn',
         'bookscom_production_id', 'readmoo_production_id', 'kobo_production_id',
         'bookscom_title', 'readmoo_title', 'kobo_title',
         'bookscom_processed_title', 'readmoo_processed_title', 'kobo_processed_title',
@@ -188,7 +231,8 @@ def merge_two_books(book1, book2):
         'bookscom_publish_date', 'readmoo_publish_date', 'kobo_publish_date',
         'bookscom_original_price', 'readmoo_original_price', 'kobo_original_price',
         'bookscom_category', 'readmoo_category', 'kobo_category',
-        'bookscom_url', 'readmoo_url', 'kobo_url'
+        'bookscom_url', 'readmoo_url', 'kobo_url',
+        'bookscom_type_ebook', 'readmoo_type_ebook', 'kobo_type_ebook'
     ]
     
     for col in fill_cols:
@@ -289,6 +333,7 @@ def get_sorted_columns(df_columns):
             'title',  # title 緊接在 TAICCA_ID 旁邊
             'bookscom_production_id', 'kobo_production_id', 'readmoo_production_id',
             'isbn', 'bookscom_isbn', 'kobo_isbn', 'readmoo_isbn',
+            'eisbn', 'bookscom_eisbn', 'kobo_eisbn', 'readmoo_eisbn',
             'bookscom_title', 'kobo_title', 'readmoo_title',
             'processed_title', 'bookscom_processed_title', 'kobo_processed_title', 'readmoo_processed_title',
             'original_title', 'bookscom_original_title', 'kobo_original_title', 'readmoo_original_title',
@@ -298,6 +343,7 @@ def get_sorted_columns(df_columns):
             'min_publish_date', 'max_publish_date', 'bookscom_publish_date', 'kobo_publish_date', 'readmoo_publish_date',
             'price', 'bookscom_original_price', 'kobo_original_price', 'readmoo_original_price',
             'bookscom_category', 'kobo_category', 'readmoo_category',
+            'bookscom_type_ebook', 'kobo_type_ebook', 'readmoo_type_ebook',
             'bookscom_url', 'kobo_url', 'readmoo_url'
         ]
     else:
@@ -306,6 +352,7 @@ def get_sorted_columns(df_columns):
             'title',
             'bookscom_production_id', 'kobo_production_id', 'readmoo_production_id',
             'isbn', 'bookscom_isbn', 'kobo_isbn', 'readmoo_isbn',
+            'eisbn', 'bookscom_eisbn', 'kobo_eisbn', 'readmoo_eisbn',
             'bookscom_title', 'kobo_title', 'readmoo_title',
             'processed_title', 'bookscom_processed_title', 'kobo_processed_title', 'readmoo_processed_title',
             'original_title', 'bookscom_original_title', 'kobo_original_title', 'readmoo_original_title',
@@ -315,6 +362,7 @@ def get_sorted_columns(df_columns):
             'min_publish_date', 'max_publish_date', 'bookscom_publish_date', 'kobo_publish_date', 'readmoo_publish_date',
             'price', 'bookscom_original_price', 'kobo_original_price', 'readmoo_original_price',
             'bookscom_category', 'kobo_category', 'readmoo_category',
+            'bookscom_type_ebook', 'kobo_type_ebook', 'readmoo_type_ebook',
             'bookscom_url', 'kobo_url', 'readmoo_url'
         ]
     
@@ -479,8 +527,11 @@ def unmerge_data():
                 target_row = df.loc[merge_position[0]]
                 # print(f"[DEBUG] Processing Unmerge for Index: {target_idx}")
                 
-                # Check for IDs in production_ids columns
-                prod_cols = ['bookscom_production_id', 'kobo_production_id', 'readmoo_production_id']
+                # Check for IDs in production_ids columns AND eisbn columns
+                prod_cols = [
+                    'bookscom_production_id', 'kobo_production_id', 'readmoo_production_id',
+                    'bookscom_eisbn', 'kobo_eisbn', 'readmoo_eisbn'
+                ]
                 original_ids_map = {col: [] for col in prod_cols}
                 has_valid_id = False
                 
@@ -504,7 +555,7 @@ def unmerge_data():
                             original_ids_map[col].extend(p_ids)
 
                 if has_valid_id:
-                    # Find original rows by any of the production IDs
+                    # Find original rows by any of the production IDs or EISBNs
                     mask = pd.Series([False] * len(input_df))
                     
                     for col, ids in original_ids_map.items():
@@ -525,7 +576,7 @@ def unmerge_data():
                     original_rows = pd.DataFrame(consolidated_rows)
                     
                 else:
-                    return jsonify({'error': 'Selected row has no valid Production IDs to trace'}), 400
+                    return jsonify({'error': 'Selected row has no valid IDs to trace'}), 400
         except ValueError:
             return jsonify({'error': 'Invalid ID format for index'}), 400
 
