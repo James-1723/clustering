@@ -182,6 +182,14 @@
         .merged-row:hover {
             background-color: #dbeafe;
         }
+
+        .loss-row {
+            background-color: #fee2e2;
+        }
+
+        .loss-row:hover {
+            background-color: #fecaca;
+        }
     </style>
 </head>
 
@@ -389,6 +397,12 @@
 
                 if (isMerged) {
                     tr.classList.add('merged-row');
+                }
+
+                // Check eslite_loss for red highlighting
+                const esliteLoss = row['eslite_loss'];
+                if (esliteLoss && String(esliteLoss).trim() !== '' && String(esliteLoss).toLowerCase() !== 'nan') {
+                    tr.classList.add('loss-row');
                 }
 
                 // Checkbox & Insert Button
